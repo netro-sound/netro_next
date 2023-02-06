@@ -111,7 +111,7 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
   useEffect(() => {
     setSeo({
       title:
-        'Exoo Sound | ' +
+        'Netro Sound | ' +
         currentTrack.name +
         ' - ' +
         currentTrack.artists.map((i) => i.name).join(', '),
