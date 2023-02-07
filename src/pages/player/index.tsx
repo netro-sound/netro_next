@@ -1,9 +1,8 @@
-import { GetServerSidePropsContext } from 'next';
 import { ITrack } from '@/interfaces/TrackInterface';
 import { classNames, concatAPIUrl } from '@/utils';
 import Image from 'next/image';
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import apiAxios from '@/libs/axios';
+import { apiAxios, ssrAxios } from '@/libs/axios';
 import { IPlaylist } from '@/interfaces/PlaylistInterface';
 import { useRouter } from 'next/router';
 import { IPagination } from '@/interfaces/PaginationInterface';
@@ -11,6 +10,7 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import useEffectTimeout from '@/hooks/useEffectTimeout';
 import { NextSeo, NextSeoProps } from 'next-seo';
 import { toastSuccess } from '@/libs/toasts';
+import { GetServerSidePropsContext } from 'next';
 
 interface Props {
   pagination: IPagination<ITrack>;
@@ -31,35 +31,7 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
   const [seo, setSeo] = useState<NextSeoProps>({} as NextSeoProps);
 
   const [search, setSearch] = useState('');
-
-  const [isFetching, setFetchingFalse] = useInfiniteScroll(
-    async () => {
-      if (cPagination?.next && !isFetching) {
-        const { data } = await apiAxios.get(cPagination.next);
-        setCPagination(data);
-        setQueue((prev) => [...prev, ...data.results]);
-        setFetchingFalse();
-      }
-    },
-    targetInfiniteScroll,
-    null,
-    10
-  );
-
-  const { clearTimeout } = useEffectTimeout(
-    async () => {
-      await searchTracks();
-    },
-    1000,
-    [search],
-    false
-  );
-
   const router = useRouter();
-
-  useEffect(() => {
-    setTargetInfiniteScroll(tableRef.current?.lastChild as HTMLElement);
-  }, [tableRef.current?.lastChild]);
 
   async function handleSearchSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -81,11 +53,24 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
     );
   }
 
-  function handleChangeTrack(obj: ITrack) {
+  function getElementCurrentTrack(tracks = queue) {
+    return tableRef.current?.children[
+      tracks.findIndex((i) => i.id === currentTrack.id)
+    ];
+  }
+
+  function handleChangeTrack(
+    obj: ITrack,
+    play = true,
+    scrollToElement: Element | null = null
+  ) {
     setCurrentTrack(obj);
     audioRef.current?.pause();
     audioRef.current?.load();
-    audioRef.current?.play();
+    if (play) audioRef.current?.play();
+    if (scrollToElement) {
+      scrollToElement?.scrollTo({ behavior: 'smooth', top: 0 });
+    }
     router.push(
       {
         pathname: router.pathname,
@@ -99,14 +84,72 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
     );
   }
 
+  function skipTrack(scrollTo = true) {
+    const index = tracks.findIndex((i) => i.id === currentTrack.id);
+    if (index + 1 < tracks.length) {
+      handleChangeTrack(
+        tracks[index + 1],
+        true,
+        scrollTo ? tableRef.current?.children[index + 1] : null
+      );
+    }
+  }
+
+  function prevTrack(scrollTo = true) {
+    const index = tracks.findIndex((i) => i.id === currentTrack.id);
+    if (index - 1 >= 0) {
+      handleChangeTrack(
+        tracks[index - 1],
+        true,
+        scrollTo ? tableRef.current?.children[index - 1] : null
+      );
+    }
+  }
+
+  function eventEnded() {
+    skipTrack(true);
+  }
+
+  async function fetchNewPage(
+    nextPage: string | null = null
+  ): Promise<IPagination<ITrack> | undefined> {
+    if (cPagination?.next && !isFetching) {
+      const { data } = await apiAxios.get(nextPage || cPagination.next);
+      await setCPagination(data);
+      await setQueue((prev) => [...prev, ...data.results]);
+      setFetchingFalse();
+      return data as IPagination<ITrack>;
+    }
+  }
+
+  const [isFetching, setFetchingFalse] = useInfiniteScroll(
+    async () => {
+      await fetchNewPage();
+    },
+    targetInfiniteScroll,
+    null,
+    10
+  );
+
+  const { clearTimeout } = useEffectTimeout(
+    async () => {
+      await searchTracks();
+    },
+    1000,
+    [search],
+    false
+  );
+
   useEffect(() => {
-    audioRef.current?.addEventListener('ended', () => {
-      const index = tracks.findIndex((i) => i.id === currentTrack.id);
-      if (index + 1 < tracks.length) {
-        handleChangeTrack(tracks[index + 1]);
-      }
-    });
-  }, []);
+    setTargetInfiniteScroll(tableRef.current?.lastChild as HTMLElement);
+  }, [tableRef.current?.lastChild]);
+
+  useEffect(() => {
+    audioRef.current?.addEventListener('ended', eventEnded);
+    return () => {
+      audioRef.current?.removeEventListener('ended', eventEnded);
+    };
+  }, [currentTrack, tracks]);
 
   useEffect(() => {
     setSeo({
@@ -116,12 +159,55 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
         ' - ' +
         currentTrack.artists.map((i) => i.name).join(', '),
     });
+
+    if (navigator.mediaSession) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentTrack.name,
+        artist: currentTrack.artists.map((i) => i.name).join(', '),
+        album: currentTrack.albums[0].name,
+        artwork: currentTrack.thumbnails.map((i) => ({
+          src: i.image,
+          sizes: `${i.width}x${i.height}`,
+          type: 'image/jpeg',
+        })) as MediaImage[],
+      });
+
+      navigator.mediaSession.setActionHandler('play', () => {
+        audioRef.current?.play();
+      });
+      navigator.mediaSession.setActionHandler('pause', () => {
+        audioRef.current?.pause();
+      });
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        prevTrack(true);
+      });
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        skipTrack(true);
+      });
+    }
   }, [currentTrack]);
+
+  useEffect(() => {
+    (async () => {
+      let paginationResult = pagination.results;
+      let element = getElementCurrentTrack(paginationResult);
+
+      while (!element) {
+        const data = await fetchNewPage();
+        if (!data) return;
+
+        paginationResult = [...paginationResult, ...data?.results];
+        element = getElementCurrentTrack(paginationResult);
+      }
+
+      element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    })();
+  }, []);
 
   return (
     <>
       <NextSeo {...seo} />
-      <div className="w-screen md:max-w-6xl grid md:grid-cols-2 bg-neutral mx-auto divide-y md:divide-x divide-neutral-700 h-full">
+      <div className="w-screen md:max-w-6xl grid md:grid-cols-2 bg-neutral mx-auto divide-y md:divide-x divide-neutral-700 min-h-screen">
         <div>
           <div className="sticky top-0 mb-8">
             <div className="p-4 grid md:grid-cols-2 gap-4 w-full items-center bg-neutral">
@@ -179,7 +265,7 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
           </div>
         </div>
         <div className="">
-          <table className="table table-fixed w-full text-sm">
+          <table className="table table-fixed w-full text-sm active">
             <thead>
               <tr>
                 <th className="w-16 text-center">#</th>
@@ -188,14 +274,18 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
               </tr>
             </thead>
             <tbody ref={tableRef}>
-              {queue.map((ltrack, index) => (
+              {queue.map((ltrack) => (
                 <tr
                   key={ltrack.spotify_id}
+                  id={ltrack.spotify_id}
                   className={classNames(
                     ltrack.id == currentTrack.id && 'active',
-                    'rounded cursor-pointer hover:active [&>td]:py-2 [&>td:not(:first-child)]:px-2'
+                    'rounded cursor-pointer [&>td]:py-2 [&>td:not(:first-child)]:px-2'
                   )}
-                  onClick={() => handleChangeTrack(ltrack)}
+                  onClick={function (ev) {
+                    const el = ev.target as Element;
+                    handleChangeTrack(ltrack, true, el);
+                  }}
                 >
                   <td>
                     <div className="avatar w-8 h-8">
@@ -241,33 +331,33 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   let tracks: ITrack[];
 
   if (!!playlist) {
-    currentPlaylist = (await apiAxios.get(`/playlists/${playlist}`)).data;
-    listInfo = (await apiAxios.get(`/playlists/${playlist}/tracks`)).data;
+    currentPlaylist = (await ssrAxios.get(`/playlists/${playlist}`)).data;
+    listInfo = (await ssrAxios.get(`/playlists/${playlist}/tracks`)).data;
   }
 
   if (!!artist) {
-    currentArtist = (await apiAxios.get(`/artists/${artist}`)).data;
-    listInfo = (await apiAxios.get(`/artists/${artist}/tracks`)).data;
+    currentArtist = (await ssrAxios.get(`/artists/${artist}`)).data;
+    listInfo = (await ssrAxios.get(`/artists/${artist}/tracks`)).data;
   }
 
   if (!!album) {
-    currentAlbum = (await apiAxios.get(`/albums/${album}`)).data;
-    listInfo = (await apiAxios.get(`/albums/${album}/tracks`)).data;
+    currentAlbum = (await ssrAxios.get(`/albums/${album}`)).data;
+    listInfo = (await ssrAxios.get(`/albums/${album}/tracks`)).data;
   }
 
   if (!!dataset) {
-    currentDataset = (await apiAxios.get(`/datasets/${dataset}`)).data;
-    listInfo = (await apiAxios.get(`/datasets/${dataset}/tracks`)).data;
+    currentDataset = (await ssrAxios.get(`/datasets/${dataset}`)).data;
+    listInfo = (await ssrAxios.get(`/datasets/${dataset}/tracks`)).data;
   }
 
   if (!!q) {
-    listInfo = (await apiAxios.get(`/tracks/search`, { params: { q } })).data;
+    listInfo = (await ssrAxios.get(`/tracks/search`, { params: { q } })).data;
   }
 
   tracks = !!listInfo ? listInfo?.results : [];
 
   if (!!track) {
-    currentTrack = (await apiAxios.get(`/tracks/${track}`)).data;
+    currentTrack = (await ssrAxios.get(`/tracks/${track}`)).data;
   } else if (!!tracks.length) {
     currentTrack = tracks[0];
   }

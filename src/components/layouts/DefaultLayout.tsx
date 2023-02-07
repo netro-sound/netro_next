@@ -10,7 +10,8 @@ const DefaultLayout = ({ children, page }: Props) => {
   return (
     <>
       <Head>
-        <title>IARANA - Agente Inteligente de Anápolis</title>
+        <title>Netro Sound</title>
+        <meta name="description" content="Netro Sound" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <main className="flex items-center justify-center min-h-screen">

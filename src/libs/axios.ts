@@ -1,14 +1,14 @@
-import axios, { InternalAxiosRequestConfig } from 'axios';
-import { toastWarning } from '@/libs/toasts';
+import axios, { InternalAxiosRequestConfig } from "axios";
+import { toastWarning } from "@/libs/toasts";
 // import { useAuthStore } from '@/store/auth';
 // import { toastWarning } from '@/utils/toasts';
 
 const apiAxios = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL + '/v1',
+  baseURL: process.env.NEXT_PUBLIC_API_URL + "/v1",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json"
   },
-  withCredentials: true,
+  withCredentials: true
 });
 
 apiAxios.interceptors.request.use((config) => {
@@ -41,4 +41,9 @@ apiAxios.interceptors.response.use(
   }
 );
 
-export default apiAxios;
+const ssrAxios = axios.create({
+  ...apiAxios.defaults,
+  baseURL: process.env.SSR_API_URL + "/v1"
+});
+
+export { apiAxios, ssrAxios };
