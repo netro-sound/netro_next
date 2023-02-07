@@ -253,6 +253,8 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
                   className="block w-full p-4 pl-10 text-sm caret-primary rounded-box bg-neutral outline-none"
                   placeholder="Search Mockups, Logos..."
                   required
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                 />
                 <button
                   type="submit"
