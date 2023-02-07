@@ -6,7 +6,7 @@ export function concatAPIUrl(url: string | undefined): string {
   return `${process.env.NEXT_PUBLIC_API_URL}${url ?? ''}`;
 }
 export function concatSSRUrl(url: string | undefined): string {
-  return `${process.env.NEXT_PUBLIC_SSR_URL}${url ?? ''}`;
+  return `${process.env.NEXT_PUBLIC_SSR_API_URL}${url ?? ''}`;
 }
 
 export function clamp(num: number, min: number, max: number): number {
