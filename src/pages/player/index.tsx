@@ -189,7 +189,8 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
 
   useEffect(() => {
     (async () => {
-      let paginationResult = pagination.results;
+      if (pagination.results.length === 0) return;
+      let paginationResult = pagination?.results;
       let element = getElementCurrentTrack(paginationResult);
 
       while (!element) {
