@@ -8,12 +8,4 @@ module.exports = {
       'devbaraus.200.17.57.29.nip.io',
     ],
   },
-  async rewrites() {
-    return [
-      {
-        source: '/v1/:path*',
-        destination: `${process.env.NEXT_PUBLIC_SSR_API_URL}/v1/:path*`,
-      },
-    ];
-  },
 };

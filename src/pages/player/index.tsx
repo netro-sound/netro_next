@@ -1,5 +1,5 @@
 import { ITrack } from '@/interfaces/TrackInterface';
-import { classNames } from '@/utils';
+import { classNames, concatAPIUrl, concatSSRUrl } from '@/utils';
 import Image from 'next/image';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { apiAxios, ssrAxios } from '@/libs/axios';
@@ -238,7 +238,7 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
 
             {currentTrack?.thumbnails ? (
               <Image
-                src={currentTrack?.thumbnails[5].image ?? ''}
+                src={concatAPIUrl(currentTrack?.thumbnails[5].image)}
                 width={currentTrack?.thumbnails[5].width}
                 height={currentTrack?.thumbnails[5].height}
                 alt="album cover"
@@ -261,7 +261,7 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
               </h2>
             </div>
             <audio controls className="mx-auto mt-4 mb-8" ref={audioRef}>
-              <source src={currentTrack?.audio} />
+              <source src={concatAPIUrl(currentTrack?.audio)} />
             </audio>
           </div>
         </div>
@@ -293,7 +293,7 @@ export default function Index({ tracks, track, playlist, pagination }: Props) {
                       <div className="mask mask-squircle ">
                         <Image
                           loading="lazy"
-                          src={ltrack.thumbnails[0].image ?? ''}
+                          src={concatSSRUrl(ltrack.thumbnails[0].image)}
                           width={ltrack.thumbnails[0].width}
                           height={ltrack.thumbnails[0].height}
                           alt="album cover"
