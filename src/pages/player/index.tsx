@@ -11,6 +11,7 @@ import useEffectTimeout from '@/hooks/useEffectTimeout';
 import { NextSeo, NextSeoProps } from 'next-seo';
 import { toastSuccess } from '@/libs/toasts';
 import * as process from 'process';
+import { GetServerSidePropsContext } from 'next';
 
 interface Props {
   pagination: IPagination<ITrack>;
