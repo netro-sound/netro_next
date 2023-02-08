@@ -4,7 +4,7 @@ import usePlayerStore from '@/stores/usePlayerStore';
 import { useEffect, useRef } from 'react';
 import useSeoStore from '@/stores/useSeoStore';
 import { ITrack } from '@/interfaces/TrackInterface';
-import TextSkeleton from '@/components/skeletons/TextSkeleton';
+import Skeleton from '@/components/skeletons/Skeleton';
 
 type Props = { defaultAudio: ITrack };
 export default function Player({ defaultAudio }: Props) {
@@ -104,14 +104,14 @@ export default function Player({ defaultAudio }: Props) {
 
       <div className="p-4 text-center">
         <h1 className="text-lg">
-          <TextSkeleton as="div" className="w-32 h-5 bg-neutral-700">
+          <Skeleton as="div" className="w-32 h-5 bg-neutral-700">
             {currentTrack?.name}
-          </TextSkeleton>
+          </Skeleton>
         </h1>
         <h2 className="text-sm">
-          <TextSkeleton as="div" className="w-20 h-4 bg-neutral-700">
+          <Skeleton as="div" className="w-20 h-4 bg-neutral-700">
             {currentTrack?.artists?.map((i) => i.name).join(', ')}
-          </TextSkeleton>
+          </Skeleton>
         </h2>
       </div>
 

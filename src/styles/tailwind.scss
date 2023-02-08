@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 body {
-  animation: color 30s infinite;
+  //animation: color 30s infinite;
+  background: #212121;
 }
 
 @-moz-keyframes color {

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { ForwardedRef, forwardRef, useMemo, useState } from 'react';
 import usePlayerStore from '@/stores/usePlayerStore';
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
+import Skeleton from '@/components/skeletons/Skeleton';
 
 type Props = {
   tracks: ITrack[];
@@ -116,13 +117,17 @@ export default forwardRef(function TableTracks(
             <td>
               <div className="avatar w-8 h-8">
                 <div className="mask mask-squircle ">
-                  <Image
-                    loading="lazy"
-                    src={concatSSRUrl(ltrack.thumbnails[0].image)}
-                    width={ltrack.thumbnails[0].width}
-                    height={ltrack.thumbnails[0].height}
-                    alt="album cover"
-                  />
+                  {ltrack.thumbnails.length ? (
+                    <Image
+                      loading="lazy"
+                      src={concatSSRUrl(ltrack.thumbnails[0].image)}
+                      width={ltrack.thumbnails[0].width}
+                      height={ltrack.thumbnails[0].height}
+                      alt="album cover"
+                    />
+                  ) : (
+                    <Skeleton className="w-8 h-8 bg-primary" />
+                  )}
                 </div>
               </div>
             </td>

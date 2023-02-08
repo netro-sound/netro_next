@@ -10,6 +10,7 @@ import { GetServerSidePropsContext } from 'next';
 import TableTracks from '@/components/tracks/TableTracks';
 import usePlayerStore from '@/stores/usePlayerStore';
 import Player from '@/components/Player';
+import Image from 'next/image';
 
 interface Props {
   pagination: IPagination<ITrack>;
@@ -127,47 +128,52 @@ export default function Index({ tracks, track, pagination }: Props) {
     <>
       <div className="w-screen md:max-w-6xl grid md:grid-cols-2 bg-neutral mx-auto divide-y md:divide-x divide-neutral-700 min-h-screen">
         <div className="sticky top-0 mb-8 h-screen">
-          <form
-            onSubmit={handleSearchSubmit}
-            className="mx-auto col-span-2 w-full"
-          >
-            <label htmlFor="search" className="sr-only">
-              Search
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <svg
-                  aria-hidden="true"
-                  className="w-5 h-5 text-gray-500 dark:text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  ></path>
-                </svg>
-              </div>
-              <input
-                type="search"
-                id="search"
-                className="block w-full p-4 pl-10 text-sm caret-primary rounded-box bg-neutral outline-none"
-                placeholder="Search for tracks, artists, albums..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="btn btn-sm btn-primary absolute right-2.5 bottom-2.5"
-              >
-                Search
-              </button>
+          <div className="flex">
+            <div className="relative w-36 ml-2 mr-4">
+              <Image src="/netrosound_jacke.svg" alt="Netro Sound logo" fill />
             </div>
-          </form>
+            <form
+              onSubmit={handleSearchSubmit}
+              className="mx-auto col-span-2 w-full"
+            >
+              <label htmlFor="search" className="sr-only">
+                Search
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg
+                    aria-hidden="true"
+                    className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                  type="search"
+                  id="search"
+                  className="block w-full p-4 pl-10 text-sm caret-primary rounded-box bg-neutral outline-none"
+                  placeholder="Search for tracks, artists, albums..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="btn btn-sm btn-primary absolute right-2.5 bottom-2.5"
+                >
+                  Search
+                </button>
+              </div>
+            </form>
+          </div>
 
           <Player defaultAudio={track} />
         </div>
