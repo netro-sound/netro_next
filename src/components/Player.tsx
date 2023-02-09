@@ -31,7 +31,7 @@ export default function Player({ defaultAudio }: Props) {
   const [setSeo] = useSeoStore((state) => [state.setSeo]);
 
   function getElementByTrack() {
-    return document.querySelector(`[data-track-spotify_id=="${currentTrack?.spotify_id}"]`);
+    return document.querySelector(`[data-track-spotify_id="${currentTrack?.spotify_id}"]`);
   }
 
   function endedEvent() {
