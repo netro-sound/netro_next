@@ -1,10 +1,10 @@
-import Image from 'next/image';
-import { concatAPIUrl, concatSSRUrl } from '@/utils';
-import usePlayerStore from '@/stores/usePlayerStore';
-import { useEffect, useRef } from 'react';
-import useSeoStore from '@/stores/useSeoStore';
-import { ITrack } from '@/interfaces/TrackInterface';
-import Skeleton from '@/components/skeletons/Skeleton';
+import Image from "next/image";
+import { concatAPIUrl, concatSSRUrl } from "@/utils";
+import usePlayerStore from "@/stores/usePlayerStore";
+import { useEffect, useRef } from "react";
+import useSeoStore from "@/stores/useSeoStore";
+import { ITrack } from "@/interfaces/TrackInterface";
+import Skeleton from "@/components/skeletons/Skeleton";
 
 type Props = { defaultAudio: ITrack };
 export default function Player({ defaultAudio }: Props) {
@@ -17,7 +17,7 @@ export default function Player({ defaultAudio }: Props) {
     play,
     pause,
     nextTrack,
-    previousTrack,
+    previousTrack
   ] = usePlayerStore((state) => [
     state.currentTrack,
     state.audioTag,
@@ -25,54 +25,60 @@ export default function Player({ defaultAudio }: Props) {
     state.play,
     state.pause,
     state.nextTrack,
-    state.previousTrack,
+    state.previousTrack
   ]);
 
   const [setSeo] = useSeoStore((state) => [state.setSeo]);
 
+  function getElementByTrack() {
+    return document.querySelector(`[data-track-spotify_id=="${currentTrack?.spotify_id}"]`);
+  }
+
   function endedEvent() {
+    const el = getElementByTrack();
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
     nextTrack(true);
   }
 
   useEffect(() => {
-    audioRef.current?.addEventListener('ended', endedEvent);
+    audioRef.current?.addEventListener("ended", endedEvent);
 
     setSeo({
       title:
-        'Netro Sound | ' +
+        "Netro Sound | " +
         currentTrack?.name +
-        ' - ' +
-        currentTrack?.artists.map((i) => i.name).join(', '),
+        " - " +
+        currentTrack?.artists.map((i) => i.name).join(", ")
     });
 
     if (navigator.mediaSession) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentTrack?.name,
-        artist: currentTrack?.artists.map((i) => i.name).join(', '),
+        artist: currentTrack?.artists.map((i) => i.name).join(", "),
         album: currentTrack?.albums[0].name,
         artwork: currentTrack?.thumbnails.map((i) => ({
           src: i.image,
           sizes: `${i.width}x${i.height}`,
-          type: 'image/jpeg',
-        })) as MediaImage[],
+          type: "image/jpeg"
+        })) as MediaImage[]
       });
 
-      navigator.mediaSession.setActionHandler('play', () => {
+      navigator.mediaSession.setActionHandler("play", () => {
         play();
       });
-      navigator.mediaSession.setActionHandler('pause', () => {
+      navigator.mediaSession.setActionHandler("pause", () => {
         pause();
       });
-      navigator.mediaSession.setActionHandler('previoustrack', () => {
+      navigator.mediaSession.setActionHandler("previoustrack", () => {
         previousTrack();
       });
-      navigator.mediaSession.setActionHandler('nexttrack', () => {
+      navigator.mediaSession.setActionHandler("nexttrack", () => {
         nextTrack();
       });
     }
 
     return () => {
-      audioRef.current?.removeEventListener('ended', endedEvent);
+      audioRef.current?.removeEventListener("ended", endedEvent);
     };
   }, [currentTrack]);
 
@@ -110,7 +116,7 @@ export default function Player({ defaultAudio }: Props) {
         </h1>
         <h2 className="text-sm">
           <Skeleton as="div" className="w-20 h-4 bg-neutral-700">
-            {currentTrack?.artists?.map((i) => i.name).join(', ')}
+            {currentTrack?.artists?.map((i) => i.name).join(", ")}
           </Skeleton>
         </h2>
       </div>

@@ -126,7 +126,7 @@ export default function Index({ tracks, track, pagination }: Props) {
   }, []);
 
   function header(className?: string) {
-    return <div className={classNames("w-full bg-neutral z-20 flex-col", className)}>
+    return <div className={classNames("w-full bg-neutral z-20 flex-col md:flex-row items-center justify-between", className)}>
       <div className="relative w-36 h-16 mx-auto md:ml-2 md:mr-4">
         <Image src="/netrosound_jacke.svg" alt="Netro Sound logo" fill />
       </div>
