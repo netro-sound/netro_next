@@ -30,13 +30,14 @@ export default function Player({ defaultAudio }: Props) {
 
   const [setSeo] = useSeoStore((state) => [state.setSeo]);
 
-  function getElementByTrack() {
-    return document.querySelector(`[data-track-spotify_id="${currentTrack?.spotify_id}"]`);
+  function getElementByTrack(track: ITrack | null = currentTrack) {
+    return document.querySelector(`[data-track-spotify_id="${track?.spotify_id}"]`);
   }
 
   function endedEvent() {
-    nextTrack(true);
-    const el = getElementByTrack();
+    const next = nextTrack(true);
+    if (!next) return;
+    const el = getElementByTrack(next);
     el?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
