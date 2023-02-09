@@ -35,9 +35,9 @@ export default function Player({ defaultAudio }: Props) {
   }
 
   function endedEvent() {
+    nextTrack(true);
     const el = getElementByTrack();
     el?.scrollIntoView({ behavior: "smooth", block: "center" });
-    nextTrack(true);
   }
 
   useEffect(() => {
