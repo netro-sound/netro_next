@@ -9,4 +9,13 @@ module.exports = {
       '172.17.0.3',
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/v1/:path*',
+        destination: process.env.NEXT_PUBLIC_API_URL + '/v1/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };

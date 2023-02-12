@@ -9,7 +9,9 @@ type Props = {
 export default function ContentWrapper({ children, className }: Props) {
   return (
     <>
-      <div className={classNames('mx-12', className)}>{children}</div>
+      <div className={classNames('mx-2 md:mx-12 space-y-4', className)}>
+        {children}
+      </div>
     </>
   );
 }

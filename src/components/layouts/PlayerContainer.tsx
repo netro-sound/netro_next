@@ -30,6 +30,7 @@ export default function PlayerContainer({}: Props) {
   const [currentTime, setCurrentTime] = useState(0);
   const [buffer, setBuffer] = useState(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [volume, setVolume] = useState(30);
 
   function handleEventIsPlaying(isPlaying: boolean) {
     setIsPlaying(isPlaying);
@@ -57,6 +58,18 @@ export default function PlayerContainer({}: Props) {
     }
   }
 
+  function eventListenerVolumeChange() {
+    if (audioTag) {
+      setVolume(audioTag.volume * 100);
+    }
+  }
+
+  function handleVolumeChange(volume: number) {
+    if (audioTag) {
+      audioTag.volume = volume / 100;
+    }
+  }
+
   function eventListenerEnded() {
     nextTrack(true);
   }
@@ -69,6 +82,11 @@ export default function PlayerContainer({}: Props) {
 
   useEffect(() => {
     audioTag?.addEventListener('ended', eventListenerEnded);
+
+    if (!currentTrack) {
+      setSeo({ title: 'Netro Sound' });
+      return;
+    }
 
     setSeo({
       title:
@@ -116,6 +134,7 @@ export default function PlayerContainer({}: Props) {
       audioTag.addEventListener('progress', eventListenerBuffer);
       audioTag.addEventListener('play', () => handleEventIsPlaying(true));
       audioTag.addEventListener('pause', () => handleEventIsPlaying(false));
+      audioTag.addEventListener('volumechange', eventListenerVolumeChange);
     }
     return () => {
       if (audioTag) {
@@ -123,6 +142,7 @@ export default function PlayerContainer({}: Props) {
         audioTag.removeEventListener('pause', () =>
           handleEventIsPlaying(false)
         );
+        audioTag.removeEventListener('volumechange', eventListenerVolumeChange);
         audioTag.removeEventListener('timeupdate', eventListenerCurrentTime);
         audioTag.removeEventListener('progress', eventListenerBuffer);
         audioTag?.removeEventListener(
@@ -135,6 +155,7 @@ export default function PlayerContainer({}: Props) {
 
   useEffect(() => {
     const audioElement = new Audio(currentTrack?.audio);
+    audioElement.volume = volume / 100;
     setAudioTag(audioElement);
   }, []);
 
@@ -143,7 +164,7 @@ export default function PlayerContainer({}: Props) {
       <div
         className={classNames(
           currentTrack ? 'bottom-4' : '-bottom-20',
-          'fixed right-0 z-40 pl-72 pr-12 rounded-box w-screen'
+          'fixed right-0 z-20 md:pl-72 md:pr-12 px-2 rounded-box w-screen'
         )}
       >
         <ProgressSlider
@@ -161,7 +182,7 @@ export default function PlayerContainer({}: Props) {
                 fill
               />
             </div>
-            <div>
+            <div className="hidden md:block">
               <Link href="" className="block">
                 {currentTrack?.name}
               </Link>
@@ -190,11 +211,11 @@ export default function PlayerContainer({}: Props) {
             </button>
           </div>
           <div className="navbar-end space-x-4">
-            <div>
+            <div className="hidden md:block">
               <span>{formatTime(currentTime)}</span>/
               <span>{formatTime(duration)}</span>
             </div>
-            <VolumeBtn />
+            <VolumeBtn volume={volume} setVolume={handleVolumeChange} />
             <QueueList />
           </div>
         </div>

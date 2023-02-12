@@ -56,7 +56,7 @@ export default function QueueList({}: Props) {
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
-          className="w-96 h-96 overflow-y-auto rounded-box shadow-lg"
+          className="w-96 max-h-96 overflow-y-auto rounded-box shadow-lg"
         >
           <TableTracks
             tracks={queue}
