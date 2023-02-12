@@ -1,11 +1,15 @@
 import { Popover } from '@headlessui/react';
-import { RiVolumeDownFill } from 'react-icons/ri';
+import {
+  RiVolumeDownFill,
+  RiVolumeMuteFill,
+  RiVolumeUpFill,
+} from 'react-icons/ri';
 import { useState } from 'react';
 import { usePopper } from 'react-popper';
 
-type Props = {};
+type Props = { volume: number; setVolume: (volume: number) => void };
 
-export default function VolumeBtn({}: Props) {
+export default function VolumeBtn({ volume, setVolume }: Props) {
   let [referenceElement, setReferenceElement] = useState<HTMLElement | null>();
   let [popperElement, setPopperElement] = useState<HTMLElement | null>();
   let { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -24,7 +28,11 @@ export default function VolumeBtn({}: Props) {
     <>
       <Popover>
         <Popover.Button ref={setReferenceElement}>
-          <RiVolumeDownFill className="text-xl" />
+          {volume === 0 && <RiVolumeMuteFill className="text-xl" />}
+          {volume > 0 && volume < 50 && (
+            <RiVolumeDownFill className="text-xl" />
+          )}
+          {volume >= 50 && <RiVolumeUpFill className="text-xl" />}
         </Popover.Button>
         <Popover.Panel
           ref={setPopperElement}
@@ -35,6 +43,10 @@ export default function VolumeBtn({}: Props) {
             type="range"
             min="0"
             max="100"
+            value={volume}
+            onChange={(e) => {
+              setVolume(parseInt(e.target.value));
+            }}
             className="range range-primary w-32 -rotate-90"
           />
         </Popover.Panel>

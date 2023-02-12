@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { ITrack } from "@/interfaces/TrackInterface";
-import { concatAPIUrl } from "@/utils";
+import { create } from 'zustand';
+import { ITrack } from '@/interfaces/TrackInterface';
+import { concatAPIUrl } from '@/utils';
 
 interface PlayerState {
   currentTrack: ITrack | null;
@@ -33,9 +33,12 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
     const { audioTag } = get();
     audioTag?.pause();
     set({ currentTrack: track });
-    audioTag?.setAttribute("src", concatAPIUrl(track.audio));
+    audioTag?.setAttribute('src', concatAPIUrl(track.audio));
     if (play) {
-      audioTag?.addEventListener("loadeddata", audioTag?.play);
+      audioTag?.addEventListener('loadeddata', audioTag?.play);
+    }
+    if (get().queue.length === 0) {
+      set({ queue: [track] });
     }
   },
   nextTrack: (play = false) => {
@@ -53,7 +56,7 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
       changeTrack(queue[index - 1], play);
       return queue[index - 1];
     }
-  }
+  },
 }));
 
 export default usePlayerStore;

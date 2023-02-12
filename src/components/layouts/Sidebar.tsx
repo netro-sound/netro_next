@@ -1,4 +1,10 @@
-import { ReactNode } from 'react';
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  ReactNode,
+  useState,
+} from 'react';
 import {
   RiAlbumLine,
   RiDiscLine,
@@ -17,6 +23,7 @@ type Props = {
 
 export default function Sidebar({ children }: Props) {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
 
   const linksSidebar = [
     {
@@ -46,37 +53,33 @@ export default function Sidebar({ children }: Props) {
     },
   ];
 
+  // Assuming `children` is a prop or variable of type `ReactNode`
+  const childrenWithProps = Children.map(children, (child: ReactNode) => {
+    // Checking isValidElement is the safe way and avoids a
+    // TypeScript error too.
+    if (isValidElement(child)) {
+      return cloneElement(child, {
+        ...child.props,
+        sideOpen: open,
+        closeSidebar: setOpen,
+      });
+    }
+    return child;
+  });
+
   return (
     <>
-      <button
-        data-drawer-target="default-sidebar"
-        data-drawer-toggle="default-sidebar"
-        aria-controls="default-sidebar"
-        type="button"
-        className="inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
-      >
-        <span className="sr-only">Open sidebar</span>
-        <svg
-          className="w-6 h-6"
-          aria-hidden="true"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            clipRule="evenodd"
-            fillRule="evenodd"
-            d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
-          ></path>
-        </svg>
-      </button>
-
       <aside
         id="default-sidebar"
-        className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+        className={classNames(
+          open
+            ? 'translate-x-0 sm:translate-x-0'
+            : '-translate-x-full sm:translate-x-0',
+          'fixed top-0 left-0 z-40 w-64 h-screen transition-transform '
+        )}
         aria-label="Sidebar"
       >
-        <div className="h-full py-4 bg-neutral text-neutral-content">
+        <div className="h-full py-4 bg-base-100 text-base-content">
           <div className="relative h-10 my-8 mx-4">
             <Image
               src="/netrosound_jacke.svg"
@@ -92,7 +95,7 @@ export default function Sidebar({ children }: Props) {
                 key={link.name}
                 className={classNames(
                   router.pathname === link.href &&
-                    'border-l-2 border-primary bg-gradient-to-r from-primary/5 to-transparent text-primary',
+                    'border-l-2 border-primary bg-gradient-to-r from-primary/25 to-transparent text-primary',
                   'transition-colors duration-200 pl-3'
                 )}
               >
@@ -108,9 +111,14 @@ export default function Sidebar({ children }: Props) {
           </ul>
         </div>
       </aside>
-
+      {open && (
+        <div
+          className="fixed inset-0 z-30 bg-base-200 bg-opacity-50"
+          onClick={() => setOpen(false)}
+        />
+      )}
       <div className="sm:ml-64 bg-base-100 text-base-content mb-32">
-        {children}
+        {childrenWithProps}
       </div>
     </>
   );

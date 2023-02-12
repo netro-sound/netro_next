@@ -7,6 +7,16 @@ module.exports = {
       '127.0.0.1',
       'devbaraus.200.17.57.29.nip.io',
       '172.17.0.3',
+      '172.17.0.5',
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: '/v1/:path*',
+        destination: process.env.NEXT_PUBLIC_API_URL + '/v1/:path*',
+        permanent: true,
+      },
+    ];
   },
 };
