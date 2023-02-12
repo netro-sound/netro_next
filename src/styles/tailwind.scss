@@ -78,3 +78,16 @@ body {
     background: #e61919;
   }
 }
+
+
+.range-player {
+  @apply bg-transparent;
+
+  &::-webkit-slider-runnable-track {
+    @apply bg-transparent;
+  }
+
+  &::-webkit-slider-thumb {
+    @apply bg-white;
+  }
+}

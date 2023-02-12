@@ -1,11 +1,13 @@
 import type { AppProps } from 'next/app';
-import DefaultLayout from '@/components/layouts/DefaultLayout';
 import type { ReactElement, ReactNode } from 'react';
 import type { NextPage } from 'next';
 import '@/styles/tailwind.scss';
 import { Toaster } from 'react-hot-toast';
 import { NextSeo } from 'next-seo';
 import useSeoStore from '@/stores/useSeoStore';
+import HeaderContainer from '@/components/layouts/HeaderContainer';
+import PlayerContainer from '@/components/layouts/PlayerContainer';
+import Sidebar from '@/components/layouts/Sidebar';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -20,14 +22,14 @@ type AppPropsWithLayout = AppProps & {
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const [getSeo] = useSeoStore((state) => [state.getSeo]);
 
-  const getLayout =
-    Component.getLayout ??
-    ((page) => <DefaultLayout page={Component}>{page}</DefaultLayout>);
-
-  return getLayout(
+  return (
     <>
       <NextSeo {...getSeo()} />
-      <Component {...pageProps} />
+      <Sidebar>
+        <HeaderContainer />
+        <PlayerContainer />
+        <Component {...pageProps} />
+      </Sidebar>
       <Toaster />
     </>
   );
