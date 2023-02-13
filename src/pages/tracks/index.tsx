@@ -8,17 +8,24 @@ import Image from 'next/image';
 import { classNames, concatSSRUrl } from '@/utils';
 import { RiLoaderFill, RiPlayFill } from 'react-icons/ri';
 import usePlayerStore from '@/stores/usePlayerStore';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import useContextMenu from '@/hooks/useContextMenu';
+import MenuContext from '@/components/MenuContextTrack';
 
 type Props = {
   tracks: IPagination<ITrack>;
 };
 
 export default function Page({ tracks }: Props) {
-  const [changeTrack] = usePlayerStore((state) => [state.changeTrack]);
+  const [changeTrack, setQueue] = usePlayerStore((state) => [
+    state.changeTrack,
+    state.setQueue,
+  ]);
+  const [checkedTracks, setCheckedTracks] = useState<ITrack[]>([]);
   const [pagination, setPagination] = useState<IPagination<ITrack>>(tracks);
   const [listTracks, setListTracks] = useState<ITrack[]>(tracks.results);
   const [isFetching, setIsFetching] = useState(false);
+  const { handleContextMenu, points, show, item } = useContextMenu<ITrack[]>();
 
   async function loadMore() {
     if (!pagination.next) return;
@@ -33,9 +40,47 @@ export default function Page({ tracks }: Props) {
     setIsFetching(false);
   }
 
+  function handleTrackClick(
+    ev: React.MouseEvent<HTMLDivElement>,
+    track: ITrack
+  ) {
+    if (ev.ctrlKey) {
+      if (checkedTracks.includes(track)) {
+        setCheckedTracks((prevState) => prevState.filter((i) => i !== track));
+      } else {
+        setCheckedTracks((prevState) => [...prevState, track]);
+      }
+    } else if (ev.shiftKey) {
+      const index = listTracks.indexOf(track);
+      const lastIndex = listTracks.indexOf(
+        checkedTracks[checkedTracks.length - 1]
+      );
+      const start = Math.min(index, lastIndex);
+      const end = Math.max(index, lastIndex);
+      const newCheckedTracks = listTracks.slice(start, end + 1);
+      setCheckedTracks(newCheckedTracks);
+    } else {
+      setCheckedTracks([]);
+      setQueue([track]);
+      changeTrack(track, true);
+    }
+  }
+
+  function handleContext(ev: React.MouseEvent<HTMLDivElement>, track?: ITrack) {
+    ev.preventDefault();
+
+    if (track && checkedTracks.includes(track))
+      handleContextMenu(ev, checkedTracks);
+    else if (track) {
+      handleContextMenu(ev, [track]);
+      setCheckedTracks([]);
+    }
+  }
+
   return (
     <>
       <Hero />
+      <MenuContext points={points} show={show} tracks={item} />
       <ContentWrapper>
         <div className="">
           <h1 className="text-xl">{tracks.count} tracks</h1>
@@ -44,10 +89,14 @@ export default function Page({ tracks }: Props) {
           {listTracks.map((track) => {
             return (
               <div
-                onClick={() => changeTrack(track, true)}
+                onClick={(ev) => handleTrackClick(ev, track)}
                 key={track.id}
                 aria-label="column"
-                className="flex justify-between group cursor-pointer hover:bg-base-200 rounded-box"
+                className={classNames(
+                  'flex justify-between group cursor-pointer hover:bg-base-200 rounded-box',
+                  checkedTracks.includes(track) && 'bg-base-200'
+                )}
+                onContextMenu={(ev) => handleContext(ev, track)}
               >
                 <div className="flex items-center space-x-4">
                   <div className="mask mask-squircle relative">

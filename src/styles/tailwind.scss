@@ -91,3 +91,7 @@ body {
     @apply bg-white;
   }
 }
+
+* {
+  user-select: none;
+}

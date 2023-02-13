@@ -9,6 +9,8 @@ interface PlayerState {
   previousTrack: (play?: boolean) => void | ITrack;
   queue: ITrack[];
   setQueue: (tracks: ITrack[]) => void;
+  addTracksToQueue: (track: ITrack[]) => void;
+  removeTracksFromQueue: (track: ITrack[]) => void;
   audioTag: HTMLAudioElement | null;
   play: () => void;
   pause: () => void;
@@ -29,6 +31,17 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
     audioTag?.pause();
   },
   setQueue: (queue: ITrack[]) => set({ queue }),
+  addTracksToQueue: (tracks: ITrack[]) =>
+    set((state) => ({
+      queue: [
+        ...state.queue,
+        ...tracks.filter((i) => !get().queue.includes(i)),
+      ],
+    })),
+  removeTracksFromQueue: (tracks: ITrack[]) =>
+    set((state) => ({
+      queue: state.queue.filter((i) => !tracks.includes(i)),
+    })),
   changeTrack: async (track, play = false) => {
     const { audioTag } = get();
     audioTag?.pause();
@@ -36,9 +49,6 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
     audioTag?.setAttribute('src', concatAPIUrl(track.audio));
     if (play) {
       audioTag?.addEventListener('loadeddata', audioTag?.play);
-    }
-    if (get().queue.length === 0) {
-      set({ queue: [track] });
     }
   },
   nextTrack: (play = false) => {

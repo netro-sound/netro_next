@@ -17,14 +17,23 @@ import useSeoStore from '@/stores/useSeoStore';
 type Props = {};
 
 export default function PlayerContainer({}: Props) {
-  const [currentTrack, audioTag, setAudioTag, nextTrack, previousTrack] =
-    usePlayerStore((state) => [
-      state.currentTrack,
-      state.audioTag,
-      state.setAudioTag,
-      state.nextTrack,
-      state.previousTrack,
-    ]);
+  const [
+    currentTrack,
+    audioTag,
+    setAudioTag,
+    nextTrack,
+    previousTrack,
+    queue,
+    changeTrack,
+  ] = usePlayerStore((state) => [
+    state.currentTrack,
+    state.audioTag,
+    state.setAudioTag,
+    state.nextTrack,
+    state.previousTrack,
+    state.queue,
+    state.changeTrack,
+  ]);
   const [setSeo] = useSeoStore((state) => [state.setSeo]);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -125,7 +134,7 @@ export default function PlayerContainer({}: Props) {
     return () => {
       audioTag?.removeEventListener('ended', eventListenerEnded);
     };
-  }, [currentTrack]);
+  }, [currentTrack, queue]);
 
   useEffect(() => {
     if (audioTag) {
@@ -152,6 +161,12 @@ export default function PlayerContainer({}: Props) {
       }
     };
   }, [audioTag]);
+
+  useEffect(() => {
+    if (audioTag?.paused && queue.length > 0) {
+      changeTrack(queue[0], true);
+    }
+  }, [queue]);
 
   useEffect(() => {
     const audioElement = new Audio(currentTrack?.audio);

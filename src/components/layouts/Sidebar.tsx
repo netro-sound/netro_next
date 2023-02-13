@@ -12,10 +12,10 @@ import {
   RiMicLine,
   RiRadio2Line,
 } from 'react-icons/ri';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { classNames } from '@/utils';
 import Link from 'next/link';
+import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
 
 type Props = {
   children: ReactNode;
@@ -80,13 +80,8 @@ export default function Sidebar({ children }: Props) {
         aria-label="Sidebar"
       >
         <div className="h-full py-4 bg-base-100 text-base-content">
-          <div className="relative h-10 my-8 mx-4">
-            <Image
-              src="/netrosound_jacke.svg"
-              alt="Netro Sound logo"
-              width={140}
-              height={80}
-            />
+          <div className="my-4 mx-4">
+            <NetroSoundLogo className="text-primary h-16" />
           </div>
 
           <ul className="space-y-2">
