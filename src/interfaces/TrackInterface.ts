@@ -9,6 +9,6 @@ export interface ITrack {
   name: string;
   artists: IArtist[];
   albums: IAlbum[];
-  duration: number;
+  duration_ms: number;
   thumbnails: IThumbnail[];
 }

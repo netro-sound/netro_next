@@ -1,7 +1,7 @@
 import { ITrack } from '@/interfaces/TrackInterface';
 import { classNames, concatSSRUrl } from '@/utils';
 import Image from 'next/image';
-import { ForwardedRef, forwardRef, useMemo, useState } from 'react';
+import React, { ForwardedRef, forwardRef, useMemo, useState } from 'react';
 import usePlayerStore from '@/stores/usePlayerStore';
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
 import Skeleton from '@/components/skeletons/Skeleton';
@@ -125,10 +125,16 @@ export default forwardRef(function TableTracks(
                       src={concatSSRUrl(ltrack.thumbnails[0].image)}
                       width={ltrack.thumbnails[0].width}
                       height={ltrack.thumbnails[0].height}
-                      alt="album cover"
+                      alt={ltrack.name}
                     />
                   ) : (
-                    <Skeleton className="w-8 h-8 bg-primary" />
+                    <Image
+                      src={'/istockphoto-1147544807-612x612.jpg'}
+                      height={612}
+                      width={612}
+                      alt={ltrack.name}
+                      className="w-12"
+                    />
                   )}
                 </div>
               </div>

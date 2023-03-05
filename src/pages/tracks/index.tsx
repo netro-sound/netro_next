@@ -5,12 +5,13 @@ import { ITrack } from '@/interfaces/TrackInterface';
 import Hero from '@/components/layouts/Hero';
 import ContentWrapper from '@/components/layouts/ContentWrapper';
 import Image from 'next/image';
-import { classNames, concatSSRUrl } from '@/utils';
+import { classNames, concatSSRUrl, formatTime } from '@/utils';
 import { RiLoaderFill, RiPlayFill } from 'react-icons/ri';
 import usePlayerStore from '@/stores/usePlayerStore';
 import React, { useState } from 'react';
 import useContextMenu from '@/hooks/useContextMenu';
 import MenuContext from '@/components/MenuContextTrack';
+import Skeleton from '@/components/skeletons/Skeleton';
 
 type Props = {
   tracks: IPagination<ITrack>;
@@ -107,16 +108,23 @@ export default function Page({ tracks }: Props) {
                     >
                       <RiPlayFill className="text-primary" />
                     </div>
-                    <Image
-                      src={
-                        concatSSRUrl(track.thumbnails[0].image) ||
-                        '/istockphoto-1147544807-612x612.jpg'
-                      }
-                      height={track.thumbnails[0].height}
-                      width={track.thumbnails[0].width}
-                      alt={track.name}
-                      className="w-12"
-                    />
+                    {track.thumbnails.length ? (
+                      <Image
+                        src={concatSSRUrl(track.thumbnails[0].image)}
+                        height={track.thumbnails[0].height}
+                        width={track.thumbnails[0].width}
+                        alt={track.name}
+                        className="w-12"
+                      />
+                    ) : (
+                      <Image
+                        src={'/istockphoto-1147544807-612x612.jpg'}
+                        height={612}
+                        width={612}
+                        alt={track.name}
+                        className="w-12"
+                      />
+                    )}
                   </div>
                   <div>
                     <h2>{track.name}</h2>
@@ -125,7 +133,11 @@ export default function Page({ tracks }: Props) {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-4"></div>
+                <div className="flex items-center space-x-4 mr-2">
+                  <p className="text-sm font-light">
+                    {formatTime(track.duration_ms / 1000)}
+                  </p>
+                </div>
               </div>
             );
           })}
