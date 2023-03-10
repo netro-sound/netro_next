@@ -1,4 +1,4 @@
-import create from 'zustand';
+import {create} from 'zustand';
 import { IUser } from '@/interfaces/UserInterface';
 import { parseISO } from 'date-fns';
 import AuthService from '@/services/AuthService';
