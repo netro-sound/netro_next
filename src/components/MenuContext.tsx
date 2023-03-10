@@ -1,5 +1,5 @@
 import { ContextMenuPoints } from '@/hooks/useContextMenu';
-import { ReactNode } from 'react';
+import React, { Fragment, ReactNode } from 'react';
 import { classNames } from '@/utils';
 
 type Props = {
@@ -24,21 +24,20 @@ export default function MenuContext({ points, menuItems, show }: Props) {
     >
       <ul className="space-y-2">
         {menuItems.map((item, index) => (
-          <>
+          <Fragment key={index}>
             {Object.keys(item).length === 0 ? (
               index < menuItems.length - 1 && (
                 <li className="h-[1px] bg-base-200" />
               )
             ) : (
               <li
-                key={index}
                 className="hover:text-primary cursor-pointer"
                 onClick={item.onClick}
               >
                 {item.label}
               </li>
             )}
-          </>
+          </Fragment>
         ))}
       </ul>
     </div>

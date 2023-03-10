@@ -23,6 +23,7 @@ export default function MenuContextTrack({ points, show, tracks }: Props) {
       [
         {
           label: 'Play',
+          id: 'play',
           onClick: () => {
             setQueue(tracks);
             changeTrack(tracks[0], true);
@@ -30,11 +31,13 @@ export default function MenuContextTrack({ points, show, tracks }: Props) {
         },
         {
           label: 'Add to queue',
+          id: 'add-to-queue',
           onClick: addToQueue,
         },
         {},
         {
           label: 'Download',
+          id: 'download',
           onClick: downloadTrack,
           single: true,
         },

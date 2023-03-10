@@ -8,6 +8,8 @@ import useSeoStore from '@/stores/useSeoStore';
 import HeaderContainer from '@/components/layouts/HeaderContainer';
 import PlayerContainer from '@/components/layouts/PlayerContainer';
 import Sidebar from '@/components/layouts/Sidebar';
+import { withIronSessionSsr } from 'iron-session/next';
+import { sessionOptions } from '@/lib/session';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -34,5 +36,16 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
     </>
   );
 };
+
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req }) {
+    return {
+      props: {
+        session: req.session,
+      },
+    };
+  },
+  sessionOptions
+);
 
 export default App;

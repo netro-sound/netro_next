@@ -43,7 +43,7 @@ export default function HeaderContainer({ sideOpen, closeSidebar }: Props) {
             type="search"
             id="default-search"
             className="input w-full pl-10"
-            placeholder="Search Mockups, Logos..."
+            placeholder="Search tracks, artists, albums or playlists..."
             required
           />
           <button

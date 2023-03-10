@@ -1,10 +1,10 @@
 import { ITrack } from '@/interfaces/TrackInterface';
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { apiAxios, ssrAxios } from '@/libs/axios';
+import { apiAxios } from '@/lib/axios';
 import { useRouter } from 'next/router';
 import { IPagination } from '@/interfaces/PaginationInterface';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
-import { toastSuccess } from '@/libs/toasts';
+import { toastSuccess } from '@/lib/toasts';
 import * as process from 'process';
 import { GetServerSidePropsContext } from 'next';
 import TableTracks from '@/components/tracks/TableTracks';
@@ -149,37 +149,37 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   let tracks: ITrack[];
 
   if (!playlist && !artist && !album && !dataset && !q) {
-    listInfo = (await ssrAxios.get(`/tracks`)).data;
+    listInfo = (await apiAxios.get(`/tracks`)).data;
   }
 
   if (!!playlist) {
-    currentPlaylist = (await ssrAxios.get(`/playlists/${playlist}`)).data;
-    listInfo = (await ssrAxios.get(`/playlists/${playlist}/tracks`)).data;
+    currentPlaylist = (await apiAxios.get(`/playlists/${playlist}`)).data;
+    listInfo = (await apiAxios.get(`/playlists/${playlist}/tracks`)).data;
   }
 
   if (!!artist) {
-    currentArtist = (await ssrAxios.get(`/artists/${artist}`)).data;
-    listInfo = (await ssrAxios.get(`/artists/${artist}/tracks`)).data;
+    currentArtist = (await apiAxios.get(`/artists/${artist}`)).data;
+    listInfo = (await apiAxios.get(`/artists/${artist}/tracks`)).data;
   }
 
   if (!!album) {
-    currentAlbum = (await ssrAxios.get(`/albums/${album}`)).data;
-    listInfo = (await ssrAxios.get(`/albums/${album}/tracks`)).data;
+    currentAlbum = (await apiAxios.get(`/albums/${album}`)).data;
+    listInfo = (await apiAxios.get(`/albums/${album}/tracks`)).data;
   }
 
   if (!!dataset) {
-    currentDataset = (await ssrAxios.get(`/datasets/${dataset}`)).data;
-    listInfo = (await ssrAxios.get(`/datasets/${dataset}/tracks`)).data;
+    currentDataset = (await apiAxios.get(`/datasets/${dataset}`)).data;
+    listInfo = (await apiAxios.get(`/datasets/${dataset}/tracks`)).data;
   }
 
   if (!!q) {
-    listInfo = (await ssrAxios.get(`/tracks/search`, { params: { q } })).data;
+    listInfo = (await apiAxios.get(`/tracks/search`, { params: { q } })).data;
   }
 
   tracks = !!listInfo ? listInfo?.results : [];
 
   if (!!track) {
-    currentTrack = (await ssrAxios.get(`/tracks/${track}`)).data;
+    currentTrack = (await apiAxios.get(`/tracks/${track}`)).data;
   } else if (!!tracks.length) {
     currentTrack = tracks[0];
   }

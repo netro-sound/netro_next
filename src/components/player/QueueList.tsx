@@ -5,7 +5,7 @@ import { RiPlayListFill } from 'react-icons/ri';
 import TableTracks from '@/components/tracks/TableTracks';
 import usePlayerStore from '@/stores/usePlayerStore';
 import { ITrack } from '@/interfaces/TrackInterface';
-import { toastSuccess } from '@/libs/toasts';
+import { toastSuccess } from '@/lib/toasts';
 import { useRouter } from 'next/router';
 
 type Props = {};

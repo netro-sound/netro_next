@@ -67,21 +67,27 @@ export default function Sidebar({ children }: Props) {
     return child;
   });
 
+  function closeSidebar() {
+    setOpen(false);
+  }
+
   return (
     <>
       <aside
         id="default-sidebar"
         className={classNames(
           open
-            ? 'translate-x-0 sm:translate-x-0'
-            : '-translate-x-full sm:translate-x-0',
+            ? 'translate-x-0 md:translate-x-0'
+            : '-translate-x-full md:translate-x-0',
           'fixed top-0 left-0 z-40 w-64 h-screen transition-transform '
         )}
         aria-label="Sidebar"
       >
         <div className="h-full py-4 bg-base-100 text-base-content">
           <div className="my-4 mx-4">
-            <NetroSoundLogo className="text-primary h-16" />
+            <Link href={'/'} onClick={closeSidebar}>
+              <NetroSoundLogo className="text-primary h-16" />
+            </Link>
           </div>
 
           <ul className="space-y-2">
@@ -96,6 +102,7 @@ export default function Sidebar({ children }: Props) {
               >
                 <Link
                   href={link.href}
+                  onClick={closeSidebar}
                   className="flex items-center p-2 text-base font-normal rounded-lg"
                 >
                   {link.icon}
@@ -112,7 +119,7 @@ export default function Sidebar({ children }: Props) {
           onClick={() => setOpen(false)}
         />
       )}
-      <div className="sm:ml-64 bg-base-100 text-base-content mb-32">
+      <div className="md:ml-64 bg-base-100 text-base-content mb-32">
         {childrenWithProps}
       </div>
     </>

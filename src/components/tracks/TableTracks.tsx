@@ -4,7 +4,6 @@ import Image from 'next/image';
 import React, { ForwardedRef, forwardRef, useMemo, useState } from 'react';
 import usePlayerStore from '@/stores/usePlayerStore';
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
-import Skeleton from '@/components/skeletons/Skeleton';
 
 type Props = {
   header?: boolean;
