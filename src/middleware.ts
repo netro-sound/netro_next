@@ -1,13 +1,14 @@
 // /middleware.ts
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { getIronSession } from 'iron-session/edge';
+import { sessionOptions } from '@/lib/session';
 
-export const middleware = async (req: NextRequest) => {
+export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
-  // const session = await getIronSession(req, res, sessionOptions);
+  const session = await getIronSession(req, res, sessionOptions);
 
-  // do anything with session here:
-  // const { token } = session.get('user');
+  console.log('session', session);
 
   // like mutate user:
   // user.something = someOtherThing;
@@ -26,8 +27,4 @@ export const middleware = async (req: NextRequest) => {
   // }
 
   return res;
-};
-
-export const config = {
-  matcher: '/:path*',
-};
+}

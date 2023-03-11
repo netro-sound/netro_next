@@ -1,4 +1,4 @@
-import {create} from 'zustand';
+import { create } from 'zustand';
 import { IUser } from '@/interfaces/UserInterface';
 import { parseISO } from 'date-fns';
 import AuthService from '@/services/AuthService';
@@ -37,8 +37,10 @@ const useAuthStore = create<IAuthStore>((set, get) => ({
     try {
       const data = await new AuthService().login(username, password);
 
+      console.log('data', data);
+
       get().update(
-        undefined,
+        data.user,
         data.token,
         data.expiry,
         keep ? 'localStorage' : 'sessionStorage'

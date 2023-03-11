@@ -2,7 +2,12 @@
 module.exports = {
   /* config options here */
   images: {
-    domains: ['images.unsplash.com', '127.0.0.1', 'api.netro.baraus.dev'],
+    domains: [
+      'images.unsplash.com',
+      '127.0.0.1',
+      'api.netro.baraus.dev',
+      'localhost',
+    ],
   },
   async redirects() {
     return [

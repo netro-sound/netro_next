@@ -56,5 +56,5 @@ export default withIronSessionApiRoute(async function loginRoute(req, res) {
   // get user from database then:
   req.session = data;
   await req.session.save();
-  res.send({ ok: true });
+  res.status(200).json(data);
 }, sessionOptions);

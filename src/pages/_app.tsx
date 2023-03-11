@@ -1,15 +1,15 @@
 import type { AppProps } from 'next/app';
 import type { ReactElement, ReactNode } from 'react';
+import { useEffect } from 'react';
 import type { NextPage } from 'next';
 import '@/styles/tailwind.scss';
 import { Toaster } from 'react-hot-toast';
 import { NextSeo } from 'next-seo';
 import useSeoStore from '@/stores/useSeoStore';
-import HeaderContainer from '@/components/layouts/HeaderContainer';
-import PlayerContainer from '@/components/layouts/PlayerContainer';
-import Sidebar from '@/components/layouts/Sidebar';
 import { withIronSessionSsr } from 'iron-session/next';
 import { sessionOptions } from '@/lib/session';
+import DefaultLayout from '@/components/layouts/DefaultLayout';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -22,16 +22,27 @@ type AppPropsWithLayout = AppProps & {
 };
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
+  const [user, checkAuth] = useAuthStore((state) => [
+    state.user,
+    state.checkAuth,
+  ]);
   const [getSeo] = useSeoStore((state) => [state.getSeo]);
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
+  const getLayout =
+    Component.getLayout || ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
   return (
     <>
       <NextSeo {...getSeo()} />
-      <Sidebar>
-        <HeaderContainer />
-        <PlayerContainer />
-        <Component {...pageProps} />
-      </Sidebar>
+      {getLayout(<Component {...pageProps} />)}
       <Toaster />
     </>
   );

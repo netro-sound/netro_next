@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as process from 'process';
+import { useAuthStore } from '@/stores/useAuthStore';
 // import { useAuthStore } from '@/store/auth';
 // import { toastWarning } from '@/utils/toasts';
 
@@ -21,15 +22,15 @@ const authAxios = axios.create({
 
 apiAxios.interceptors.request.use((config) => {
   // if url do not end with / adds / to the end
-  // if (!config.url?.endsWith('/')) {
-  //   config.url += '/';
-  // }
-  //
-  // const token = useAuthStore.getState().token;
-  //
-  // if (token) {
-  //   config.headers.Authorization = `Token ${token}`;
-  // }
+  if (!config.url?.endsWith('/')) {
+    config.url += '/';
+  }
+
+  const token = useAuthStore.getState().token;
+
+  if (token) {
+    config.headers.Authorization = `Token ${token}`;
+  }
 
   return config;
 });
