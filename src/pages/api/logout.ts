@@ -9,6 +9,5 @@ export default withSession(function logoutRoute(req, res) {
     message: 'You have successfully logged out.',
   };
 
-  // Redirect to login page
-  res.redirect('/auth/login');
+  return res.end();
 });
