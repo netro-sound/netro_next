@@ -12,8 +12,8 @@ export default withSession(async function loginRoute(req, res) {
     // @ts-ignore
     req.session.auth = data;
     await req.session.save();
-    res.status(200).json(data);
+    return res.status(200).json(data);
   } catch (error: any) {
-    res.status(401).json({ error: error.message });
+    return res.status(401).json({ error: error.message });
   }
 });
