@@ -13,8 +13,8 @@ export default withSession(async (req, res) => {
     // @ts-ignore
     await session.save();
 
-    return res.json({ flash, auth });
+    res.status(200).json({ flash, auth });
   }
 
-  return res.status(401).end();
+  res.status(401).json({ error: 'Unauthorized' });
 });
