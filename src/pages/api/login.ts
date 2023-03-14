@@ -63,7 +63,7 @@ export default withSession(async function loginRoute(req, res) {
     };
 
     await req.session.save();
-    return res.redirect('/').end();
+    return res.status(200).json(data);
   } catch (error: any) {
     // @ts-ignore
     req.session.flash = {
@@ -71,6 +71,6 @@ export default withSession(async function loginRoute(req, res) {
       message: error.response.data.detail,
     };
     await req.session.save();
-    return res.redirect('/auth/login').end();
+    return res.end();
   }
 });

@@ -17,6 +17,7 @@ import { classNames } from '@/utils';
 import Link from 'next/link';
 import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { toastError } from '@/lib/toasts';
 
 type Props = {
   children: ReactNode;
@@ -73,6 +74,15 @@ export default function Sidebar({ children }: Props) {
     setOpen(false);
   }
 
+  async function handleLogout() {
+    try {
+      await logout();
+      await router.push('/login');
+    } catch (error: any) {
+      toastError(error?.message);
+    }
+  }
+
   return (
     <>
       <aside
@@ -114,7 +124,10 @@ export default function Sidebar({ children }: Props) {
             ))}
           </ul>
 
-          <button className="btn btn-outline btn-sm mt-auto" onClick={logout}>
+          <button
+            className="btn btn-outline btn-sm mt-auto"
+            onClick={handleLogout}
+          >
             Logout
           </button>
         </div>

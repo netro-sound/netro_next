@@ -1,4 +1,4 @@
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '@/stores/useAuthStore';
 import BlankLayout from '@/components/layouts/BlankLayout';
@@ -10,9 +10,15 @@ import { toastError } from '@/lib/toasts';
 const Login = () => {
   const [login] = useAuthStore((state) => [state.login]);
   const { register, handleSubmit } = useForm();
+  const router = useRouter();
 
   async function submitLogin(data: any) {
-    await login(data.username, data.password);
+    try {
+      await login(data.username, data.password);
+      await router.push('/');
+    } catch (error: any) {
+      toastError(error?.message);
+    }
   }
 
   return (

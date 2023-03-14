@@ -97,9 +97,9 @@ const useAuthStore = create<IAuthStore>((set, get) => ({
     try {
       get().clear();
       await new AuthService().logout();
-      window.location.href = '/auth/login';
+      return Promise.resolve();
     } catch (e) {
-      console.log(e);
+      return Promise.reject(e);
     }
   },
 }));
