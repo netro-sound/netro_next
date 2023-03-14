@@ -31,18 +31,18 @@ export default function QueueList({}: Props) {
 
   const router = useRouter();
 
-  function handleChangeTrack(obj: ITrack, play = true) {
+  async function handleChangeTrack(obj: ITrack, play = true) {
     changeTrack(obj, play);
-    router.push(
+    toastSuccess(
+      `Now playing ${obj.name} - ${obj.artists.map((i) => i.name).join(', ')}`
+    );
+    await router.push(
       {
         pathname: router.pathname,
         query: { ...router.query, track: obj.id },
       },
       undefined,
       { shallow: true }
-    );
-    toastSuccess(
-      `Now playing ${obj.name} - ${obj.artists.map((i) => i.name).join(', ')}`
     );
   }
 

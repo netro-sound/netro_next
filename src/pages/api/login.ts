@@ -60,6 +60,7 @@ export default withSession(async function loginRoute(req, res) {
     type: 'success',
     message: 'You have successfully logged in.',
   };
+
   await req.session.save();
   res.status(200).json(data);
 });

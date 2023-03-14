@@ -5,6 +5,7 @@ import BlankLayout from '@/components/layouts/BlankLayout';
 import { ReactElement } from 'react';
 import Link from 'next/link';
 import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
+import { toastError } from '@/lib/toasts';
 
 const Login = () => {
   const [login] = useAuthStore((state) => [state.login]);
@@ -13,9 +14,9 @@ const Login = () => {
   async function submitLogin(data: any) {
     try {
       await login(data.username, data.password);
-      Router.push('/');
-    } catch (error) {
-      console.error('An unexpected error happened occurred:', error);
+      return await Router.push('/');
+    } catch (error: any) {
+      toastError(error?.message);
     }
   }
 
