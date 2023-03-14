@@ -12,12 +12,7 @@ const Login = () => {
   const { register, handleSubmit } = useForm();
 
   async function submitLogin(data: any) {
-    try {
-      await login(data.username, data.password);
-      return await Router.push('/');
-    } catch (error: any) {
-      toastError(error?.message);
-    }
+    await login(data.username, data.password);
   }
 
   return (

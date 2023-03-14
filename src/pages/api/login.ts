@@ -48,19 +48,29 @@ import withSession from '@/lib/session';
 import { IAuth } from '@/interfaces/AuthInterface';
 
 export default withSession(async function loginRoute(req, res) {
-  const { data } = await authAxios.post('/login/', {
-    username: req.body.username,
-    password: req.body.password,
-  });
+  try {
+    const { data } = await authAxios.post('/login/', {
+      username: req.body.username,
+      password: req.body.password,
+    });
 
-  // @ts-ignore
-  req.session.auth = data;
-  // @ts-ignore
-  req.session.flash = {
-    type: 'success',
-    message: 'You have successfully logged in.',
-  };
+    // @ts-ignore
+    req.session.auth = data;
+    // @ts-ignore
+    req.session.flash = {
+      type: 'success',
+      message: 'You have successfully logged in.',
+    };
 
-  await req.session.save();
-  res.status(200).json(data);
+    await req.session.save();
+    return res.redirect('/').end();
+  } catch (error: any) {
+    // @ts-ignore
+    req.session.flash = {
+      type: 'error',
+      message: error.response.data.detail,
+    };
+    await req.session.save();
+    return res.redirect('/auth/login').end();
+  }
 });

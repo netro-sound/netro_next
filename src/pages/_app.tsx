@@ -26,7 +26,7 @@ type AppPropsWithLayout = AppProps & {
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const [user, update] = useAuthStore((state) => [state.user, state.update]);
   const [getSeo] = useSeoStore((state) => [state.getSeo]);
-  const route = useRouter();
+  const router = useRouter();
 
   function handleSessionFlash({
     type,
@@ -52,7 +52,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
         handleSessionFlash(flash);
       }
     });
-  }, [route.pathname]);
+  }, [router.pathname]);
 
   const getLayout =
     Component.getLayout || ((page) => <DefaultLayout>{page}</DefaultLayout>);
