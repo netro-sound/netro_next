@@ -1,13 +1,7 @@
-import { IronSessionOptions } from 'iron-session';
+import { withIronSessionApiRoute } from 'iron-session/next';
+import { NextApiHandler } from 'next';
+import { sessionOptions } from '@/lib/session.config';
 
-const TOKEN_SECRET = process.env.TOKEN_SECRET as string;
-const COOKIE_NAME = process.env.COOKIE_NAME as string;
-
-export const sessionOptions: IronSessionOptions = {
-  cookieName: COOKIE_NAME,
-  password: TOKEN_SECRET,
-  // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
-  cookieOptions: {
-    secure: process.env.NODE_ENV === 'production',
-  },
-};
+export default function withSession(handler: NextApiHandler) {
+  return withIronSessionApiRoute(handler, sessionOptions);
+}

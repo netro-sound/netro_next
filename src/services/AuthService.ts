@@ -23,8 +23,7 @@ class AuthService {
 
   async logout(): Promise<IAuth> {
     try {
-      const { data } = await axios.post('/api/logout');
-      return Promise.resolve(data);
+      return await axios.post('/api/logout');
     } catch (error) {
       return Promise.reject(error);
     }

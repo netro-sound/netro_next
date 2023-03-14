@@ -1,9 +1,10 @@
 import { ITrack } from '@/interfaces/TrackInterface';
-import { classNames, concatSSRUrl } from '@/utils';
+import { classNames, concatAPIUrl, concatSSRUrl } from '@/utils';
 import Image from 'next/image';
 import React, { ForwardedRef, forwardRef, useMemo, useState } from 'react';
 import usePlayerStore from '@/stores/usePlayerStore';
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
+import ImageSkeleton from '@/components/skeletons/ImageSkeleton';
 
 type Props = {
   header?: boolean;
@@ -45,19 +46,15 @@ export default forwardRef(function TableTracks(
     switch (ordering) {
       case `-${id}`:
         setOrdering('default');
-        console.log('default');
         break;
       case id:
         setOrdering(('-' + id) as any);
-        console.log('-' + id);
         break;
       case 'default':
         setOrdering(id as any);
-        console.log(id);
         break;
       default:
         setOrdering(id as any);
-        console.log(id);
         break;
     }
   }
@@ -118,23 +115,13 @@ export default forwardRef(function TableTracks(
             <td className="w-16">
               <div className="avatar w-8 h-8">
                 <div className="mask mask-squircle ">
-                  {ltrack.thumbnails.length ? (
-                    <Image
-                      loading="lazy"
-                      src={concatSSRUrl(ltrack.thumbnails[0].image)}
-                      width={ltrack.thumbnails[0].width}
-                      height={ltrack.thumbnails[0].height}
-                      alt={ltrack.name}
-                    />
-                  ) : (
-                    <Image
-                      src={'/istockphoto-1147544807-612x612.jpg'}
-                      height={612}
-                      width={612}
-                      alt={ltrack.name}
-                      className="w-12"
-                    />
-                  )}
+                  <ImageSkeleton
+                    checker={!!ltrack.thumbnails.length}
+                    width={ltrack.thumbnails[0].width}
+                    height={ltrack.thumbnails[0].height}
+                    src={ltrack.thumbnails[0].image}
+                    alt={ltrack.name}
+                  />
                 </div>
               </div>
             </td>

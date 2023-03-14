@@ -2,27 +2,24 @@ import { create } from 'zustand';
 import { IUser } from '@/interfaces/UserInterface';
 import { parseISO } from 'date-fns';
 import AuthService from '@/services/AuthService';
+import { IAuth } from '@/interfaces/AuthInterface';
 
 export interface IAuthStore {
   token?: string;
-  expires?: string;
+  expiry?: string;
   user?: IUser;
+  session?: IAuth;
   isAuthenticated: () => boolean;
   login: (cpf: string, password: string, keep?: boolean) => Promise<void>;
   logout: () => Promise<void>;
   clear: () => void;
-  update: (
-    user: IUser | undefined,
-    token: string,
-    expires: string,
-    strategy?: string
-  ) => void;
+  update: (session?: IAuth, strategy?: string) => void;
   checkAuth: () =>
     | undefined
     | {
         user: IUser | undefined;
         token: string | undefined;
-        expires: string | undefined;
+        expiry: string | undefined;
       };
   storage?: Storage;
 }
@@ -30,21 +27,14 @@ export interface IAuthStore {
 const useAuthStore = create<IAuthStore>((set, get) => ({
   user: undefined,
   token: undefined,
-  expires: undefined,
+  expiry: undefined,
   storage: undefined,
   isAuthenticated: () => !!get().user,
   login: async (username: string, password: string, keep?: boolean) => {
     try {
       const data = await new AuthService().login(username, password);
 
-      console.log('data', data);
-
-      get().update(
-        data.user,
-        data.token,
-        data.expiry,
-        keep ? 'localStorage' : 'sessionStorage'
-      );
+      get().update(data, keep ? 'localStorage' : 'sessionStorage');
 
       return Promise.resolve();
     } catch (error) {
@@ -54,25 +44,29 @@ const useAuthStore = create<IAuthStore>((set, get) => ({
   clear() {
     set({ user: undefined });
     set({ token: undefined });
-    set({ expires: undefined });
+    set({ expiry: undefined });
     set({ storage: localStorage });
 
     localStorage.clear();
     sessionStorage.clear();
   },
-  update(user: IUser | undefined, token: string, expires: string, strategy?) {
+  update(session?: IAuth, strategy?: string) {
+    const { user, token, expiry } = session || {};
+
     set({
       storage: strategy === 'localStorage' ? localStorage : sessionStorage,
     });
     localStorage.setItem('NETRO.strategy', strategy || 'sessionStorage');
 
     set({ token: token });
-    set({ expires: expires });
+    set({ expiry: expiry });
     set({ user: user });
+    set({ session: session });
+
     // @ts-ignore
     get().storage.setItem('NETRO.token', token);
     // @ts-ignore
-    get().storage.setItem('NETRO.expires', expires);
+    get().storage.setItem('NETRO.expiry', expiry);
     // @ts-ignore
     get().storage.setItem('NETRO.user', JSON.stringify(user));
   },
@@ -80,29 +74,30 @@ const useAuthStore = create<IAuthStore>((set, get) => ({
     const strategy = localStorage.getItem('NETRO.strategy') || 'sessionStorage';
     const storage = strategy === 'localStorage' ? localStorage : sessionStorage;
 
-    if (get().token && get().expires && get().user) {
-      return { user: get().user, token: get().token, expires: get().expires };
+    if (get().token && get().expiry && get().user) {
+      return { user: get().user, token: get().token, expiry: get().expiry };
     }
 
     const token = storage.getItem('NETRO.token');
-    const expires = storage.getItem('NETRO.expires');
+    const expiry = storage.getItem('NETRO.expiry');
     const user = storage.getItem('NETRO.user');
-    const dateExpires = expires ? parseISO(expires) : new Date();
+    const dateexpiry = expiry ? parseISO(expiry) : new Date();
 
-    if (!!expires && dateExpires > new Date() && !!token && !!user) {
-      set({ expires: expires });
+    if (!!expiry && dateexpiry > new Date() && !!token && !!user) {
+      set({ expiry: expiry });
       set({ token: token });
       set({ user: JSON.parse(user) as IUser });
       set({ storage: storage });
-      return { token, expires, user: JSON.parse(user) as IUser };
+      return { token, expiry, user: JSON.parse(user) as IUser };
     }
 
     return undefined;
   },
   logout: async () => {
     try {
-      await new AuthService().logout();
       get().clear();
+      await new AuthService().logout();
+      window.location.href = '/auth/login';
     } catch (e) {
       console.log(e);
     }

@@ -6,10 +6,12 @@ import '@/styles/tailwind.scss';
 import { Toaster } from 'react-hot-toast';
 import { NextSeo } from 'next-seo';
 import useSeoStore from '@/stores/useSeoStore';
-import { withIronSessionSsr } from 'iron-session/next';
-import { sessionOptions } from '@/lib/session';
 import DefaultLayout from '@/components/layouts/DefaultLayout';
 import { useAuthStore } from '@/stores/useAuthStore';
+import useSession from '@/hooks/useSession';
+import { toastError, toastSuccess, toastWarning } from '@/lib/toasts';
+import { useRouter } from 'next/router';
+import { isEmpty } from 'lodash';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -22,19 +24,35 @@ type AppPropsWithLayout = AppProps & {
 };
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
-  const [user, checkAuth] = useAuthStore((state) => [
-    state.user,
-    state.checkAuth,
-  ]);
+  const [user, update] = useAuthStore((state) => [state.user, state.update]);
   const [getSeo] = useSeoStore((state) => [state.getSeo]);
+  const route = useRouter();
+
+  function handleSessionFlash({
+    type,
+    message,
+  }: {
+    type: string;
+    message: string;
+  }) {
+    const toasts = {
+      success: () => toastSuccess(message),
+      warning: () => toastWarning(message),
+      error: () => toastError(message),
+    };
+
+    // @ts-ignore
+    toasts[type]();
+  }
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
+    useSession().then(({ auth, flash }) => {
+      update(auth);
+      if (!isEmpty(flash)) {
+        handleSessionFlash(flash);
+      }
+    });
+  }, [route.pathname]);
 
   const getLayout =
     Component.getLayout || ((page) => <DefaultLayout>{page}</DefaultLayout>);
@@ -42,21 +60,20 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   return (
     <>
       <NextSeo {...getSeo()} />
+      {/*<Transition*/}
+      {/*  show={Boolean(user)}*/}
+      {/*  enter="transition-opacity duration-300"*/}
+      {/*  enterFrom="opacity-0"*/}
+      {/*  enterTo="opacity-100"*/}
+      {/*  leave="transition-opacity duration-300"*/}
+      {/*  leaveFrom="opacity-100"*/}
+      {/*  leaveTo="opacity-0"*/}
+      {/*>*/}
       {getLayout(<Component {...pageProps} />)}
+      {/*</Transition>*/}
       <Toaster />
     </>
   );
 };
-
-export const getServerSideProps = withIronSessionSsr(
-  async function getServerSideProps({ req }) {
-    return {
-      props: {
-        session: req.session,
-      },
-    };
-  },
-  sessionOptions
-);
 
 export default App;

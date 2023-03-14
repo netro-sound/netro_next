@@ -11,6 +11,7 @@ import useContextMenu from '@/hooks/useContextMenu';
 import MenuContext from '@/components/tracks/MenuContextTrack';
 import Skeleton from '@/components/skeletons/Skeleton';
 import ImageSkeleton from '@/components/skeletons/ImageSkeleton';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 type Props = {};
 
@@ -26,6 +27,7 @@ export default function Page({}: Props) {
   const [tracks, setTracks] = useState<ITrack[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const { handleContextMenu, points, show, item } = useContextMenu<ITrack[]>();
+  const [session] = useAuthStore((state) => [state.session]);
 
   async function fetchTracks() {
     const data = await new TrackService().fetchTracks();
@@ -66,7 +68,7 @@ export default function Page({}: Props) {
     } else {
       setCheckedTracks([]);
       setQueue([track]);
-      changeTrack(track, true);
+      // changeTrack(track, true);
     }
   }
 
@@ -82,8 +84,8 @@ export default function Page({}: Props) {
   }
 
   useEffect(() => {
-    fetchTracks();
-  }, []);
+    if (session) fetchTracks();
+  }, [session]);
 
   return (
     <>

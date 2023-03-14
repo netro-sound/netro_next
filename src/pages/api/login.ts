@@ -43,18 +43,23 @@
 
 // pages/api/login.ts
 
-import { withIronSessionApiRoute } from 'iron-session/next';
 import { authAxios } from '@/lib/axios';
-import { sessionOptions } from '@/lib/session';
+import withSession from '@/lib/session';
+import { IAuth } from '@/interfaces/AuthInterface';
 
-export default withIronSessionApiRoute(async function loginRoute(req, res) {
+export default withSession(async function loginRoute(req, res) {
   const { data } = await authAxios.post('/login/', {
     username: req.body.username,
     password: req.body.password,
   });
 
-  // get user from database then:
-  req.session = data;
+  // @ts-ignore
+  req.session.auth = data;
+  // @ts-ignore
+  req.session.flash = {
+    type: 'success',
+    message: 'You have successfully logged in.',
+  };
   await req.session.save();
   res.status(200).json(data);
-}, sessionOptions);
+});

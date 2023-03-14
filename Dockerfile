@@ -1,13 +1,18 @@
 FROM node:18-alpine as BUILD_IMAGE
+
+# install pnpm
+RUN npm install -g pnpm
+
 WORKDIR /app
-COPY package.json yarn.lock ./
+COPY package.json pnpm-lock.yaml ./
 # install dependencies
-RUN yarn install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 COPY . .
 # build
 RUN yarn build
 # remove dev dependencies
 RUN npm prune --production
+
 FROM node:18-alpine
 WORKDIR /app
 # copy from build image

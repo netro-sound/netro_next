@@ -163,7 +163,7 @@ export default function PlayerContainer({}: Props) {
   }, [audioTag]);
 
   useEffect(() => {
-    if (audioTag?.paused && queue.length > 0) {
+    if (queue.length === 1) {
       changeTrack(queue[0], true);
     }
   }, [queue]);

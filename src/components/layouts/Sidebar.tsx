@@ -16,6 +16,7 @@ import { useRouter } from 'next/router';
 import { classNames } from '@/utils';
 import Link from 'next/link';
 import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 type Props = {
   children: ReactNode;
@@ -23,6 +24,7 @@ type Props = {
 
 export default function Sidebar({ children }: Props) {
   const router = useRouter();
+  const [logout] = useAuthStore((state) => [state.logout]);
   const [open, setOpen] = useState(false);
 
   const linksSidebar = [
@@ -83,14 +85,14 @@ export default function Sidebar({ children }: Props) {
         )}
         aria-label="Sidebar"
       >
-        <div className="h-full py-4 bg-base-100 text-base-content">
+        <div className="h-full py-4 bg-base-100 text-base-content flex flex-col items-center">
           <div className="my-4 mx-4">
             <Link href={'/'} onClick={closeSidebar}>
               <NetroSoundLogo className="text-primary h-16" />
             </Link>
           </div>
 
-          <ul className="space-y-2">
+          <ul className="space-y-2 w-full">
             {linksSidebar.map((link) => (
               <li
                 key={link.name}
@@ -111,6 +113,10 @@ export default function Sidebar({ children }: Props) {
               </li>
             ))}
           </ul>
+
+          <button className="btn btn-outline btn-sm mt-auto" onClick={logout}>
+            Logout
+          </button>
         </div>
       </aside>
       {open && (

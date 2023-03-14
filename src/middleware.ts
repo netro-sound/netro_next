@@ -1,19 +1,42 @@
 // /middleware.ts
-import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { getIronSession } from 'iron-session/edge';
-import { sessionOptions } from '@/lib/session';
+import { sessionOptions } from '@/lib/session.config';
+import { IAuth } from '@/interfaces/AuthInterface';
+import { parseISO } from 'date-fns';
 
-export async function middleware(req: NextRequest) {
+export const middleware = async (req: NextRequest) => {
+  const currentPath = req.nextUrl.pathname;
   const res = NextResponse.next();
   const session = await getIronSession(req, res, sessionOptions);
 
-  console.log('session', session);
+  if (Object.keys(session).length === 0) {
+    // @ts-ignore
+    session['flash'] = {
+      type: 'error',
+      message: 'You are not logged in. Please login first.',
+    };
+    await session.save();
+    return NextResponse.redirect(new URL('/auth/login', req.url));
+  } else if (currentPath.startsWith('/auth')) {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
 
-  // like mutate user:
-  // user.something = someOtherThing;
-  // or:
-  // session.user = someoneElse;
+  const { expiry } = session as unknown as IAuth;
+
+  const expiryDate = parseISO(expiry);
+
+  if (expiryDate && new Date() > expiryDate) {
+    await session.destroy();
+    // @ts-ignore
+    session['flash'] = {
+      type: 'error',
+      message: 'Your session has expired. Please login again.',
+    };
+    await session.save();
+    return NextResponse.redirect(new URL('/auth/login', req.url));
+  }
 
   // uncomment next line to commit changes:
   // await session.save();
@@ -27,4 +50,17 @@ export async function middleware(req: NextRequest) {
   // }
 
   return res;
-}
+};
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|auth|v1|_next/static|_next/image|favicon.ico).*)',
+  ],
+};

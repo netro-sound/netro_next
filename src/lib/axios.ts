@@ -1,11 +1,12 @@
 import axios from 'axios';
 import * as process from 'process';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { toastWarning } from '@/lib/toasts';
 // import { useAuthStore } from '@/store/auth';
 // import { toastWarning } from '@/utils/toasts';
 
 const apiAxios = axios.create({
-  baseURL: '/v1',
+  baseURL: process.env.NEXT_PUBLIC_API_URL + '/v1',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -38,13 +39,13 @@ apiAxios.interceptors.request.use((config) => {
 apiAxios.interceptors.response.use(
   (response) => response,
   (error) => {
-    // if (error.response.status === 401) {
-    //   useAuthStore.getState().logout();
-    // }
+    if (error.response.status === 401) {
+      useAuthStore.getState().logout();
+    }
 
-    // if (error.response.status === 403) {
-    //   toastWarning('Você não tem permissão para acessar essa informação.');
-    // }
+    if (error.response.status === 403) {
+      toastWarning('Você não tem permissão para acessar essa informação.');
+    }
 
     return Promise.reject(error);
   }

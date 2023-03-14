@@ -1,6 +1,15 @@
 import { create } from 'zustand';
 import { ITrack } from '@/interfaces/TrackInterface';
+import { COOKIE_NAME } from '@/lib/session.config';
 import { concatAPIUrl } from '@/utils';
+import TrackService from '@/services/TrackService';
+
+type TrackData = {
+  blobParts: Blob[];
+  nextRange: number;
+  maxRange: number;
+  contentType: string;
+};
 
 interface PlayerState {
   currentTrack: ITrack | null;
@@ -15,6 +24,7 @@ interface PlayerState {
   play: () => void;
   pause: () => void;
   setAudioTag: (audioTag: HTMLAudioElement) => void;
+  trackData: TrackData;
 }
 
 const usePlayerStore = create<PlayerState>()((set, get) => ({
@@ -22,6 +32,7 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
   setAudioTag: (audioTag: HTMLAudioElement) => set({ audioTag }),
   currentTrack: null,
   queue: [],
+  trackData: {} as TrackData,
   play: () => {
     const { audioTag } = get();
     audioTag?.play();
@@ -46,14 +57,24 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
     const { audioTag } = get();
     audioTag?.pause();
     set({ currentTrack: track });
-    audioTag?.setAttribute('src', concatAPIUrl(track.audio));
+
+    const { token } = await new TrackService().fetchTokenAccess(
+      track.spotify_id
+    );
+
+    audioTag?.setAttribute(
+      'src',
+      concatAPIUrl(`/v1/tracks/${track.spotify_id}/stream?token=${token}`)
+    );
     if (play) {
       audioTag?.addEventListener('loadeddata', audioTag?.play);
     }
   },
   nextTrack: (play = false) => {
     const { queue, currentTrack, changeTrack } = get();
-    const index = queue.findIndex((i) => i.id === currentTrack?.id);
+    const index = queue.findIndex(
+      (i) => i.spotify_id === currentTrack?.spotify_id
+    );
     if (index + 1 < queue.length) {
       changeTrack(queue[index + 1], play);
       return queue[index + 1];
@@ -61,7 +82,9 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
   },
   previousTrack: (play = false) => {
     const { queue, currentTrack, changeTrack } = get();
-    const index = queue.findIndex((i) => i.id === currentTrack?.id);
+    const index = queue.findIndex(
+      (i) => i.spotify_id === currentTrack?.spotify_id
+    );
     if (index - 1 >= 0) {
       changeTrack(queue[index - 1], play);
       return queue[index - 1];
