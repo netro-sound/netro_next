@@ -11,6 +11,7 @@ export const middleware = async (req: NextRequest) => {
   const res = NextResponse.next();
   const session = await getIronSession(req, res, sessionOptions);
 
+  console.log('req.session', req.cookies);
   console.log('session', session);
   console.log('currentPath', currentPath);
 
