@@ -11,7 +11,11 @@ export const middleware = async (req: NextRequest) => {
   const res = NextResponse.next();
   const session = await getIronSession(req, res, sessionOptions);
 
-  if (Object.keys(session).length === 0) {
+  if (Object.keys(session).length === 0 && currentPath == '/auth/login') {
+    return res;
+  }
+
+  if (Object.keys(session).length === 0 && currentPath != '/auth/login') {
     // @ts-ignore
     session['flash'] = {
       type: 'error',
@@ -19,8 +23,6 @@ export const middleware = async (req: NextRequest) => {
     };
     await session.save();
     return NextResponse.redirect(new URL('/auth/login', req.url));
-  } else if (currentPath.startsWith('/auth')) {
-    return NextResponse.redirect(new URL('/', req.url));
   }
 
   const { expiry } = session as unknown as IAuth;
