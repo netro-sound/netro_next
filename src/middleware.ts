@@ -11,6 +11,9 @@ export const middleware = async (req: NextRequest) => {
   const res = NextResponse.next();
   const session = await getIronSession(req, res, sessionOptions);
 
+  console.log('session', session);
+  console.log('currentPath', currentPath);
+
   if (Object.keys(session).length === 0 && currentPath == '/auth/login') {
     return res;
   }
