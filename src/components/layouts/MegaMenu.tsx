@@ -21,7 +21,10 @@ type SearchForm = {
 };
 
 export default function MegaMenu({ sideOpen, closeSidebar }: Props) {
-  const [changeTrack] = usePlayerStore((state) => [state.changeTrack]);
+  const [changeTrack, setQueue] = usePlayerStore((state) => [
+    state.changeTrack,
+    state.setQueue,
+  ]);
   const { register, handleSubmit, watch, getValues } = useForm<SearchForm>();
   const [searchError, setSearchError] = useState<boolean>(false);
   const [onFocus, setOnFocus] = useState(false);
@@ -68,6 +71,10 @@ export default function MegaMenu({ sideOpen, closeSidebar }: Props) {
     }
 
     setSearchError(error);
+  }
+
+  function handlePlayTrack(track: ITrack) {
+    setQueue([track]);
   }
 
   return (
@@ -146,7 +153,7 @@ export default function MegaMenu({ sideOpen, closeSidebar }: Props) {
                 ) : (
                   tracks.map((track) => (
                     <li
-                      onClick={() => changeTrack(track, true)}
+                      onClick={() => handlePlayTrack(track)}
                       key={track.id}
                       className="hover-bordered w-full"
                     >

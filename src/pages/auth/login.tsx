@@ -16,11 +16,7 @@ const Login = () => {
   async function submitLogin(data: any) {
     try {
       await login(data.username, data.password);
-      await router.push('/');
-      toastSuccess(
-        'Successfully logged in!',
-        <RiEmotionHappyLine className="text-lg" />
-      );
+      await router.reload();
     } catch (error: any) {
       toastError(error?.message);
     }
