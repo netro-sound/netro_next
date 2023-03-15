@@ -12,7 +12,7 @@ class TrackService {
 
   async fetchTokenAccess(spotify_id: string): Promise<{ token: string }> {
     try {
-      const { data } = await this.client.post(`/tracks/${spotify_id}/token`);
+      const { data } = await this.client.get(`/tracks/${spotify_id}/token`);
       return Promise.resolve(data);
     } catch (error) {
       return Promise.reject(error);
