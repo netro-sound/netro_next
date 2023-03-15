@@ -15,18 +15,18 @@ export const middleware = async (req: NextRequest) => {
   // console.log('session', session);
   // console.log('currentPath', currentPath);
 
-  if (Object.keys(session).length === 0 && currentPath == '/auth/login') {
-    return res;
-  }
-
-  if (Object.keys(session).length === 0 && currentPath != '/auth/login') {
-    // @ts-ignore
-    session['flash'] = {
-      type: 'error',
-      message: 'You are not logged in. Please login first.',
-    };
-    await session.save();
-    return NextResponse.redirect(new URL('/auth/login', req.url));
+  if (Object.keys(session).length === 0) {
+    if (currentPath === '/auth/login') {
+      return res;
+    } else {
+      // @ts-ignore
+      session['flash'] = {
+        type: 'error',
+        message: 'You are not logged in. Please login first.',
+      };
+      await session.save();
+      return NextResponse.redirect(new URL('/auth/login', req.url));
+    }
   }
 
   const { expiry } = session as unknown as IAuth;
@@ -55,7 +55,7 @@ export const middleware = async (req: NextRequest) => {
   //   return NextResponse.redirect(new URL('/unauthorized', req.url)); // redirect to /unauthorized page
   // }
 
-  return res;
+  return NextResponse.redirect(new URL('/', req.url));
 };
 
 export const config = {
