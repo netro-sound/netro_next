@@ -4,10 +4,10 @@ module.exports = {
   images: {
     domains: [
       'images.unsplash.com',
-      '127.0.0.1',
+      'netro.devbaraus.ddns.net',
       'api.netro.baraus.dev',
       'localhost',
-      process.env.NEXT_PUBLIC_API_URL.replace('https://', ''),
+      '127.0.0.1',
     ],
   },
   async redirects() {
