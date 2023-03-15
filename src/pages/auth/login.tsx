@@ -6,7 +6,7 @@ import { ReactElement } from 'react';
 import Link from 'next/link';
 import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
 import { toastError, toastSuccess } from '@/lib/toasts';
-import { BiHappy } from 'react-icons/all';
+import { BiHappy } from 'react-icons/bi';
 
 const Login = () => {
   const [login] = useAuthStore((state) => [state.login]);
