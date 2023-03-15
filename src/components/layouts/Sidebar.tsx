@@ -8,6 +8,8 @@ import {
 import {
   RiAlbumLine,
   RiDiscLine,
+  RiEmotionHappyLine,
+  RiEmotionSadLine,
   RiHome4Line,
   RiMicLine,
   RiRadio2Line,
@@ -18,7 +20,6 @@ import Link from 'next/link';
 import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { toastError, toastSuccess } from '@/lib/toasts';
-import { BiSad } from 'react-icons/all';
 
 type Props = {
   children: ReactNode;
@@ -78,10 +79,10 @@ export default function Sidebar({ children }: Props) {
   async function handleLogout() {
     try {
       await logout();
-      await router.push('/login');
+      await router.push('/auth/login');
       toastSuccess(
         'You have been logged out successfully',
-        <BiSad className="text-lg" />
+        <RiEmotionSadLine className="text-lg" />
       );
     } catch (error: any) {
       toastError(error?.message);
