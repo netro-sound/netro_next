@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.13",
@@ -36,6 +37,7 @@
     "@types/lodash": "^4.14.191",
     "autoprefixer": "^10.4.13",
     "daisyui": "^2.51.3",
+    "husky": "^8.0.3",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
     "react-icons": "^4.8.0",
