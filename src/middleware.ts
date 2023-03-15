@@ -55,7 +55,11 @@ export const middleware = async (req: NextRequest) => {
   //   return NextResponse.redirect(new URL('/unauthorized', req.url)); // redirect to /unauthorized page
   // }
 
-  return NextResponse.redirect(new URL('/', req.url));
+  if (currentPath === '/auth/login') {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
+
+  return res;
 };
 
 export const config = {
