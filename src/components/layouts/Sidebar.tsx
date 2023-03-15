@@ -17,7 +17,8 @@ import { classNames } from '@/utils';
 import Link from 'next/link';
 import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { toastError } from '@/lib/toasts';
+import { toastError, toastSuccess } from '@/lib/toasts';
+import { BiSad } from 'react-icons/all';
 
 type Props = {
   children: ReactNode;
@@ -78,6 +79,10 @@ export default function Sidebar({ children }: Props) {
     try {
       await logout();
       await router.push('/login');
+      toastSuccess(
+        'You have been logged out successfully',
+        <BiSad className="text-lg" />
+      );
     } catch (error: any) {
       toastError(error?.message);
     }

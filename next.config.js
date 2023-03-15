@@ -7,6 +7,7 @@ module.exports = {
       '127.0.0.1',
       'api.netro.baraus.dev',
       'localhost',
+      process.env.NEXT_PUBLIC_API_URL.replace('https://', ''),
     ],
   },
   async redirects() {

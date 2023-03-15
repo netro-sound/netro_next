@@ -49,15 +49,13 @@ const toastLayout = (
     </div>
   );
 };
-const toastError = (message: string, options?: any) => {
+const toastError = (
+  message: string,
+  icon: ReactElement = <BiError className="text-xl" />,
+  options: any = {}
+) => {
   return toast.custom(
-    (t) =>
-      toastLayout(
-        message,
-        t,
-        <BiError className="text-xl" />,
-        'text-error-content bg-error'
-      ),
+    (t) => toastLayout(message, t, icon, 'text-error-content bg-error'),
     {
       ...defaultOptions,
       ...options,
@@ -65,15 +63,13 @@ const toastError = (message: string, options?: any) => {
   );
 };
 
-const toastSuccess = (message: string, options?: any) => {
+const toastSuccess = (
+  message: string,
+  icon: ReactElement = <BiCheck className="text-xl" />,
+  options: any = {}
+) => {
   return toast.custom(
-    (t) =>
-      toastLayout(
-        message,
-        t,
-        <BiCheck className="text-xl" />,
-        'text-success-content bg-success'
-      ),
+    (t) => toastLayout(message, t, icon, 'text-success-content bg-success'),
     {
       ...defaultOptions,
       ...options,
@@ -81,25 +77,24 @@ const toastSuccess = (message: string, options?: any) => {
   );
 };
 
-const toastInfo = (message: string, options?: any) => {
-  return toast.custom(
-    (t) => toastLayout(message, t, <BiInfoCircle className="text-xl" />),
-    {
-      ...defaultOptions,
-      ...options,
-    }
-  );
+const toastInfo = (
+  message: string,
+  icon: ReactElement = <BiInfoCircle className="text-xl" />,
+  options: any = {}
+) => {
+  return toast.custom((t) => toastLayout(message, t, icon), {
+    ...defaultOptions,
+    ...options,
+  });
 };
 
-const toastWarning = (message: string, options?: any) => {
+const toastWarning = (
+  message: string,
+  icon: ReactElement = <BiMessageAlt className="text-xl" />,
+  options?: any
+) => {
   return toast.custom(
-    (t) =>
-      toastLayout(
-        message,
-        t,
-        <BiMessageAlt className="text-xl" />,
-        'text-warning-content bg-warning'
-      ),
+    (t) => toastLayout(message, t, icon, 'text-warning-content bg-warning'),
     {
       ...defaultOptions,
       ...options,

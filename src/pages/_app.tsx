@@ -9,7 +9,12 @@ import useSeoStore from '@/stores/useSeoStore';
 import DefaultLayout from '@/components/layouts/DefaultLayout';
 import { useAuthStore } from '@/stores/useAuthStore';
 import useSession from '@/hooks/useSession';
-import { toastError, toastSuccess, toastWarning } from '@/lib/toasts';
+import {
+  toastError,
+  toastInfo,
+  toastSuccess,
+  toastWarning,
+} from '@/lib/toasts';
 import { useRouter } from 'next/router';
 import { isEmpty } from 'lodash';
 
@@ -38,6 +43,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
     const toasts = {
       success: () => toastSuccess(message),
       warning: () => toastWarning(message),
+      info: () => toastInfo(message),
       error: () => toastError(message),
     };
 

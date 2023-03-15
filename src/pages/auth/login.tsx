@@ -5,7 +5,8 @@ import BlankLayout from '@/components/layouts/BlankLayout';
 import { ReactElement } from 'react';
 import Link from 'next/link';
 import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
-import { toastError } from '@/lib/toasts';
+import { toastError, toastSuccess } from '@/lib/toasts';
+import { BiHappy } from 'react-icons/all';
 
 const Login = () => {
   const [login] = useAuthStore((state) => [state.login]);
@@ -16,6 +17,7 @@ const Login = () => {
     try {
       await login(data.username, data.password);
       await router.push('/');
+      toastSuccess('Successfully logged in!', <BiHappy className="text-lg" />);
     } catch (error: any) {
       toastError(error?.message);
     }
