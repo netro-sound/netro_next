@@ -4,7 +4,7 @@ import useTheme from '../hooks/useTheme';
 
 export default function Document() {
   return (
-    <Html>
+    <Html data-theme="bumblebee">
       <Head>
         <meta name="theme-color" content="#000000" />
         <link rel="shortcut icon" href="/favicon.ico" />
