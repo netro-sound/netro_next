@@ -58,9 +58,7 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
     audioTag?.pause();
     set({ currentTrack: track });
 
-    const { token } = await new TrackService().fetchTokenAccess(
-      track.spotify_id
-    );
+    const { token } = await TrackService.fetchTokenAccess(track.spotify_id);
 
     audioTag?.setAttribute(
       'src',

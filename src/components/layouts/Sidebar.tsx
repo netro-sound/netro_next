@@ -12,7 +12,9 @@ import {
   RiEmotionSadLine,
   RiHome4Line,
   RiMicLine,
+  RiMoonFill,
   RiRadio2Line,
+  RiSunFill,
 } from 'react-icons/ri';
 import { useRouter } from 'next/router';
 import { classNames } from '@/utils';
@@ -20,6 +22,7 @@ import Link from 'next/link';
 import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { toastError, toastSuccess } from '@/lib/toasts';
+import useTheme from '@/hooks/useTheme';
 
 type Props = {
   children: ReactNode;
@@ -29,6 +32,7 @@ export default function Sidebar({ children }: Props) {
   const router = useRouter();
   const [logout] = useAuthStore((state) => [state.logout]);
   const [open, setOpen] = useState(false);
+  const [theme, toggleTheme] = useTheme();
 
   const linksSidebar = [
     {
@@ -36,26 +40,26 @@ export default function Sidebar({ children }: Props) {
       href: '/',
       icon: <RiHome4Line />,
     },
-    {
-      name: 'Tracks',
-      href: '/tracks',
-      icon: <RiDiscLine />,
-    },
-    {
-      name: 'Albums',
-      href: '/albums',
-      icon: <RiAlbumLine />,
-    },
-    {
-      name: 'Artists',
-      href: '/artists',
-      icon: <RiMicLine />,
-    },
-    {
-      name: 'Playlists',
-      href: '/playlists',
-      icon: <RiRadio2Line />,
-    },
+    // {
+    //   name: 'Tracks',
+    //   href: '/tracks',
+    //   icon: <RiDiscLine />,
+    // },
+    // {
+    //   name: 'Albums',
+    //   href: '/albums',
+    //   icon: <RiAlbumLine />,
+    // },
+    // {
+    //   name: 'Artists',
+    //   href: '/artists',
+    //   icon: <RiMicLine />,
+    // },
+    // {
+    //   name: 'Playlists',
+    //   href: '/playlists',
+    //   icon: <RiRadio2Line />,
+    // },
   ];
 
   // Assuming `children` is a prop or variable of type `ReactNode`
@@ -79,11 +83,7 @@ export default function Sidebar({ children }: Props) {
   async function handleLogout() {
     try {
       await logout();
-      await router.push('/auth/login');
-      toastSuccess(
-        'You have been logged out successfully',
-        <RiEmotionSadLine className="text-lg" />
-      );
+      await router.reload();
     } catch (error: any) {
       toastError(error?.message);
     }
@@ -101,7 +101,7 @@ export default function Sidebar({ children }: Props) {
         )}
         aria-label="Sidebar"
       >
-        <div className="h-full py-4 bg-base-100 text-base-content flex flex-col items-center">
+        <div className="h-full py-4 bg-base-100 dark:bg-base-100 text-base-content flex flex-col items-center">
           <div className="my-4 mx-4">
             <Link href={'/'} onClick={closeSidebar}>
               <NetroSoundLogo className="text-primary h-16" />
@@ -130,12 +130,22 @@ export default function Sidebar({ children }: Props) {
             ))}
           </ul>
 
-          <button
-            className="btn btn-outline btn-sm mt-auto"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <div className="flex items-center mt-auto gap-4">
+            <button className="btn btn-outline btn-sm" onClick={handleLogout}>
+              Logout
+            </button>
+            <button
+              className="btn btn-outline btn-sm"
+              onClick={toggleTheme}
+              title="Toggle Dark Mode"
+            >
+              {theme === 'light' ? (
+                <RiMoonFill className="w-5 h-5" />
+              ) : (
+                <RiSunFill className="w-5 h-5" />
+              )}
+            </button>
+          </div>
         </div>
       </aside>
       {open && (

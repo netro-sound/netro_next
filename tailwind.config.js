@@ -1,5 +1,6 @@
 /** @type {import("tailwindcss").Config} */
 module.exports = {
+  darkMode: 'class',
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     container: {
@@ -7,6 +8,9 @@ module.exports = {
       padding: '1rem',
     },
     extend: {},
+  },
+  daisyui: {
+    darkTheme: 'halloween',
   },
   plugins: [require('daisyui')],
 };
