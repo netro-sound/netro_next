@@ -17,6 +17,7 @@ import {
 } from '@/lib/toasts';
 import { useRouter } from 'next/router';
 import { isEmpty } from 'lodash';
+import { Analytics } from '@vercel/analytics/react';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -78,6 +79,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
       {getLayout(<Component {...pageProps} />)}
       {/*</Transition>*/}
       <Toaster />
+      <Analytics />
     </>
   );
 };
