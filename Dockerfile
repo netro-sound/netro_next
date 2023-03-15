@@ -11,7 +11,7 @@ COPY . .
 # build
 RUN pnpm run build
 # remove dev dependencies
-RUN npm prune --production
+RUN pnpm prune --prod
 
 FROM node:18-alpine
 WORKDIR /app
