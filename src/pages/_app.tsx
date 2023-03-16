@@ -67,17 +67,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   return (
     <>
       <NextSeo {...getSeo()} />
-      {/*<Transition*/}
-      {/*  show={Boolean(user)}*/}
-      {/*  enter="transition-opacity duration-300"*/}
-      {/*  enterFrom="opacity-0"*/}
-      {/*  enterTo="opacity-100"*/}
-      {/*  leave="transition-opacity duration-300"*/}
-      {/*  leaveFrom="opacity-100"*/}
-      {/*  leaveTo="opacity-0"*/}
-      {/*>*/}
       {getLayout(<Component {...pageProps} />)}
-      {/*</Transition>*/}
       <Toaster />
       <Analytics />
     </>

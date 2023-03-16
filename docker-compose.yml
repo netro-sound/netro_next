@@ -3,7 +3,12 @@ version: '3.9'
 services:
   nextjs:
     build: .
+    image: devsbaraus/netro_nextjs
+    network_mode: host
     container_name: netro_nextjs
     restart: unless-stopped
-    ports:
-      - 3000:3000
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3333

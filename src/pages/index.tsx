@@ -4,7 +4,7 @@ import { ITrack } from '@/interfaces/TrackInterface';
 import Hero from '@/components/layouts/Hero';
 import ContentWrapper from '@/components/layouts/ContentWrapper';
 import { classNames, formatTime } from '@/utils';
-import { RiLoaderFill, RiPlayFill } from 'react-icons/ri';
+import { RiLoaderFill, RiPlayFill, RiRefreshLine } from 'react-icons/ri';
 import usePlayerStore from '@/stores/usePlayerStore';
 import React, { useEffect, useState } from 'react';
 import useContextMenu from '@/hooks/useContextMenu';
@@ -12,6 +12,8 @@ import MenuContext from '@/components/tracks/MenuContextTrack';
 import Skeleton from '@/components/skeletons/Skeleton';
 import ImageSkeleton from '@/components/skeletons/ImageSkeleton';
 import { useAuthStore } from '@/stores/useAuthStore';
+import useImmediateAsync from '@/hooks/useImmediateAsync';
+import useExecuteAsync from '@/hooks/useExecuteAsync';
 
 type Props = {};
 
@@ -28,6 +30,8 @@ export default function Page({}: Props) {
   const [isFetching, setIsFetching] = useState(false);
   const { handleContextMenu, points, show, item } = useContextMenu<ITrack[]>();
   const [session] = useAuthStore((state) => [state.session]);
+  const { execute: executeRefresh, isLoading: isRefreshing } =
+    useExecuteAsync(fetchTracks);
 
   async function fetchTracks() {
     const data = await TrackService.fetchTracks();
@@ -92,12 +96,20 @@ export default function Page({}: Props) {
       <Hero />
       <MenuContext points={points} show={show} tracks={item} />
       <ContentWrapper>
-        <div className="">
+        <div className="flex w-full">
           <h1 className="text-xl">
             <Skeleton as="span" className="h-8 w-32 bg-base-200 rounded-box">
               {pagination.count ? `${pagination.count} tracks` : null}
             </Skeleton>
           </h1>
+          <button className="ml-auto group" onClick={executeRefresh}>
+            <RiRefreshLine
+              className={classNames(
+                'text-lg group-hover:text-primary transition duration-300',
+                isRefreshing && 'animate-spin'
+              )}
+            />
+          </button>
         </div>
         <div aria-label="row" className="grid md:grid-cols-2 gap-2 w-full">
           {tracks.length

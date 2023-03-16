@@ -11,7 +11,7 @@ COPY . .
 # build
 RUN pnpm run build
 # remove dev dependencies
-RUN pnpm prune --prod
+RUN pnpm prune --config.ignore-scripts=true --prod
 
 FROM node:18-alpine
 WORKDIR /app
@@ -21,4 +21,4 @@ COPY --from=BUILD_IMAGE /app/node_modules ./node_modules
 COPY --from=BUILD_IMAGE /app/.next ./.next
 COPY --from=BUILD_IMAGE /app/public ./public
 EXPOSE 3000
-CMD ["pnpm", "run", "start"]
+CMD ["npm", "run", "start"]
