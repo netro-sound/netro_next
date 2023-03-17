@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { NextSeoProps } from 'next-seo';
+import siteConfig from '@/site.config';
 
 interface SeoState extends NextSeoProps {
   setSeo: (seo: NextSeoProps) => void;
@@ -7,19 +8,19 @@ interface SeoState extends NextSeoProps {
 }
 
 const useSeoStore = create<SeoState>()((set, get) => ({
-  title: 'Netro Sound',
-  description: 'Home page',
+  title: siteConfig.title,
+  description: siteConfig.description,
   openGraph: {
-    title: 'Netro Sound',
-    description: 'Home page',
-    images: [
-      {
-        url: 'https://www.example.ie/og-image-01.jpg',
-        width: 800,
-        height: 600,
-        alt: 'Og Image Alt',
-      },
-    ],
+    title: siteConfig.title,
+    description: siteConfig.description,
+    // images: [
+    //   {
+    //     url: 'https://www.example.ie/og-image-01.jpg',
+    //     width: 800,
+    //     height: 600,
+    //     alt: 'Og Image Alt',
+    //   },
+    // ],
   },
   twitter: {
     handle: '@handle',
