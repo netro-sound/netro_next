@@ -21,7 +21,7 @@ export default function Document() {
 
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="manifest" href="manifest.json" />
         <meta name="theme-color" content="#E0A82E" />
         <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
