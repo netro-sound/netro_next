@@ -13,6 +13,7 @@ import { classNames, formatTime } from '@/utils';
 import React, { useEffect, useState } from 'react';
 import useSeoStore from '@/stores/useSeoStore';
 import ImageSkeleton from '@/components/skeletons/ImageSkeleton';
+import siteConfig from '@/site.config';
 
 type Props = {};
 
@@ -93,7 +94,7 @@ export default function PlayerContainer({}: Props) {
     audioTag?.addEventListener('ended', eventListenerEnded);
 
     if (!currentTrack) {
-      setSeo({ title: 'Netro Sound' });
+      setSeo({ title: siteConfig.title });
       return;
     }
 
