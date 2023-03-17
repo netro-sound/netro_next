@@ -18,6 +18,7 @@ import {
 import { useRouter } from 'next/router';
 import { isEmpty } from 'lodash';
 import { Analytics } from '@vercel/analytics/react';
+import Head from 'next/head';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -66,6 +67,12 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   return (
     <>
+      <Head>
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
+        />
+      </Head>
       <NextSeo {...getSeo()} />
       {getLayout(<Component {...pageProps} />)}
       <Toaster />

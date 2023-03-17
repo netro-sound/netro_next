@@ -1,14 +1,14 @@
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+});
+
 /** @type {import("next").NextConfig} */
-module.exports = {
+module.exports = withPWA({
   /* config options here */
   images: {
-    domains: [
-      'images.unsplash.com',
-      'netro.devbaraus.ddns.net',
-      'api.netro.baraus.dev',
-      'localhost',
-      '127.0.0.1',
-    ],
+    domains: ['netro.devbaraus.ddns.net', 'localhost'],
+    unoptimized: true,
   },
   async redirects() {
     return [
@@ -19,4 +19,4 @@ module.exports = {
       },
     ];
   },
-};
+});

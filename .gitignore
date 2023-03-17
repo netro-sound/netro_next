@@ -39,3 +39,7 @@ next-env.d.ts
 !.env.example
 # Local Netlify folder
 .netlify
+
+# sw.js and workbox-*.js are auto-generated with the build
+public/sw.js
+public/workbox-*.js
