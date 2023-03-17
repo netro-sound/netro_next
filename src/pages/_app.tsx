@@ -82,3 +82,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 };
 
 export default App;
+
+function useWorkbox() {
+  throw new Error('Function not implemented.');
+}
