@@ -6,14 +6,13 @@ import {
   useState,
 } from 'react';
 import {
-  RiAlbumLine,
-  RiDiscLine,
-  RiEmotionHappyLine,
-  RiEmotionSadLine,
-  RiHome4Line,
-  RiMicLine,
+  RiAlbumFill,
+  RiDatabase2Fill,
+  RiDiscFill,
+  RiHome4Fill,
+  RiMicFill,
   RiMoonFill,
-  RiRadio2Line,
+  RiRadio2Fill,
   RiSunFill,
 } from 'react-icons/ri';
 import { useRouter } from 'next/router';
@@ -21,7 +20,7 @@ import { classNames } from '@/utils';
 import Link from 'next/link';
 import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { toastError, toastSuccess } from '@/lib/toasts';
+import { toastError } from '@/lib/toasts';
 import useTheme from '@/hooks/useTheme';
 
 type Props = {
@@ -38,28 +37,33 @@ export default function Sidebar({ children }: Props) {
     {
       name: 'Home',
       href: '/',
-      icon: <RiHome4Line />,
+      icon: <RiHome4Fill />,
     },
-    // {
-    //   name: 'Tracks',
-    //   href: '/tracks',
-    //   icon: <RiDiscLine />,
-    // },
-    // {
-    //   name: 'Albums',
-    //   href: '/albums',
-    //   icon: <RiAlbumLine />,
-    // },
-    // {
-    //   name: 'Artists',
-    //   href: '/artists',
-    //   icon: <RiMicLine />,
-    // },
-    // {
-    //   name: 'Playlists',
-    //   href: '/playlists',
-    //   icon: <RiRadio2Line />,
-    // },
+    {
+      name: 'Tracks',
+      href: '/tracks',
+      icon: <RiDiscFill />,
+    },
+    {
+      name: 'Artists',
+      href: '/artists',
+      icon: <RiMicFill />,
+    },
+    {
+      name: 'Albums',
+      href: '/albums',
+      icon: <RiAlbumFill />,
+    },
+    {
+      name: 'Playlists',
+      href: '/playlists',
+      icon: <RiRadio2Fill />,
+    },
+    {
+      name: 'Datasets',
+      href: '/datasets',
+      icon: <RiDatabase2Fill />,
+    },
   ];
 
   // Assuming `children` is a prop or variable of type `ReactNode`
@@ -108,13 +112,13 @@ export default function Sidebar({ children }: Props) {
             </Link>
           </div>
 
-          <ul className="space-y-2 w-full">
+          <ul className="space-y-2 w-full px-4">
             {linksSidebar.map((link) => (
               <li
                 key={link.name}
                 className={classNames(
-                  router.pathname === link.href &&
-                    'border-l-2 border-primary bg-gradient-to-r from-primary/25 to-transparent text-primary',
+                  router.pathname.startsWith(link.href) &&
+                    'bg-gradient-to-r from-primary/25 to-transparent text-primary rounded-box relative after:border-l-2 after:absolute after:left-0 after:h-6 after:w-2 after:top-1/2 after:-translate-y-1/2 after:bg-primary after:rounded-full',
                   'transition-colors duration-200 pl-3'
                 )}
               >

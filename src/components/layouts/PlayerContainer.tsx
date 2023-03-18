@@ -100,7 +100,6 @@ export default function PlayerContainer({}: Props) {
 
     setSeo({
       title:
-        'Netro Sound | ' +
         currentTrack?.name +
         ' - ' +
         currentTrack?.artists.map((i) => i.name).join(', '),
@@ -195,10 +194,8 @@ export default function PlayerContainer({}: Props) {
               <div className="avatar h-14 w-14 flex-none">
                 {
                   <ImageSkeleton
-                    checker={!!currentTrack}
-                    src={currentTrack.thumbnails[5].image}
-                    width={currentTrack.thumbnails[5].width}
-                    height={currentTrack.thumbnails[5].height}
+                    thumbnails={currentTrack.thumbnails}
+                    index={5}
                     alt={currentTrack.name}
                     className="w-14"
                   />

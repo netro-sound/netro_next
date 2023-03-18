@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { ITrack } from '@/interfaces/TrackInterface';
-import { COOKIE_NAME } from '@/lib/session.config';
 import { concatAPIUrl } from '@/utils';
 import TrackService from '@/services/TrackService';
 

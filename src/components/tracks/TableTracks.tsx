@@ -1,6 +1,5 @@
 import { ITrack } from '@/interfaces/TrackInterface';
-import { classNames, concatAPIUrl, concatSSRUrl } from '@/utils';
-import Image from 'next/image';
+import { classNames } from '@/utils';
 import React, { ForwardedRef, forwardRef, useMemo, useState } from 'react';
 import usePlayerStore from '@/stores/usePlayerStore';
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
@@ -116,10 +115,8 @@ export default forwardRef(function TableTracks(
               <div className="avatar w-8 h-8">
                 <div className="mask mask-squircle ">
                   <ImageSkeleton
-                    checker={!!ltrack.thumbnails.length}
-                    width={ltrack.thumbnails[0].width}
-                    height={ltrack.thumbnails[0].height}
-                    src={ltrack.thumbnails[0].image}
+                    thumbnails={ltrack.thumbnails}
+                    index={0}
                     alt={ltrack.name}
                   />
                 </div>

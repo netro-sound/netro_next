@@ -1,12 +1,11 @@
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '@/stores/useAuthStore';
 import BlankLayout from '@/components/layouts/BlankLayout';
 import { ReactElement } from 'react';
 import Link from 'next/link';
 import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
-import { toastError, toastSuccess } from '@/lib/toasts';
-import { RiEmotionHappyLine } from 'react-icons/ri';
+import { toastError } from '@/lib/toasts';
 
 const Login = () => {
   const [login] = useAuthStore((state) => [state.login]);

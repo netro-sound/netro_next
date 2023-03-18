@@ -1,4 +1,3 @@
-import TrackService from '@/services/TrackService';
 import { IPagination } from '@/interfaces/PaginationInterface';
 import { ITrack } from '@/interfaces/TrackInterface';
 import Hero from '@/components/layouts/Hero';
@@ -11,6 +10,9 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import useExecuteAsync from '@/hooks/useExecuteAsync';
 import { GridTracks } from '@/components/tracks/GridTracks';
 import InfiniteScroller from '@/components/InfiniteScroller';
+import PlaylistService from '@/services/PlaylistService';
+import { useRouter } from 'next/router';
+import DatasetService from '@/services/DatasetService';
 
 type Props = {};
 
@@ -24,8 +26,11 @@ export default function Page({}: Props) {
   const { execute: executeRefresh, isLoading: isRefreshing } =
     useExecuteAsync(fetchTracks);
 
+  const route = useRouter();
+  const spotifyID = route.query.sid as string;
+
   async function fetchTracks() {
-    const data = await TrackService.fetch();
+    const data = await DatasetService.fetchTracks(spotifyID);
     setPagination(data);
     setTracks(data.results);
   }
@@ -37,15 +42,15 @@ export default function Page({}: Props) {
     const params = new URLSearchParams(new URL(pagination.next).search);
     const nextPage = parseInt(params.get('page') || '1');
 
-    const data = await TrackService.fetch('', nextPage);
+    const data = await DatasetService.fetchTracks(spotifyID, nextPage);
     setPagination(data);
     setTracks((prevState) => [...prevState, ...data.results]);
     setIsFetching(false);
   }
 
   useEffect(() => {
-    if (session) fetchTracks();
-  }, [session]);
+    if (session && spotifyID) fetchTracks();
+  }, [session, spotifyID]);
 
   return (
     <>

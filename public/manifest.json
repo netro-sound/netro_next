@@ -4,7 +4,7 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Netro Sound | Query by Example",
+  "name": "Netro Sound",
   "description": "A plataforma de m\u00fasica que usa intelig\u00eancia artificial para identificar m\u00fasicas.",
   "short_name": "Netro Sound",
   "icons": [
