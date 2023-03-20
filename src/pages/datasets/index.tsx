@@ -25,7 +25,7 @@ export default function Page({}: Props) {
     useExecuteAsync(fetchDatasets);
 
   async function fetchDatasets() {
-    const data = await DatasetService.fetch();
+    const data = await DatasetService.fetchAll();
     setPagination(data);
     setDatasets(data.results);
   }
@@ -37,7 +37,7 @@ export default function Page({}: Props) {
     const params = new URLSearchParams(new URL(pagination.next).search);
     const nextPage = parseInt(params.get('page') || '1');
 
-    const data = await DatasetService.fetch('', nextPage);
+    const data = await DatasetService.fetchAll('', nextPage);
     setPagination(data);
     setDatasets((prevState) => [...prevState, ...data.results]);
     setIsFetching(false);

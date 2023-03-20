@@ -9,6 +9,7 @@ import {
   RiAlbumFill,
   RiDatabase2Fill,
   RiDiscFill,
+  RiFlaskFill,
   RiHome4Fill,
   RiMicFill,
   RiMoonFill,
@@ -22,6 +23,7 @@ import NetroSoundLogo from '@/components/svg/NetroSoundLogo';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { toastError } from '@/lib/toasts';
 import useTheme from '@/hooks/useTheme';
+import AudioRecorder from '@/components/AudioRecorder';
 
 type Props = {
   children: ReactNode;
@@ -63,6 +65,11 @@ export default function Sidebar({ children }: Props) {
       name: 'Datasets',
       href: '/datasets',
       icon: <RiDatabase2Fill />,
+    },
+    {
+      name: 'Experiments',
+      href: '/experiments',
+      icon: <RiFlaskFill />,
     },
   ];
 
@@ -134,6 +141,7 @@ export default function Sidebar({ children }: Props) {
             ))}
           </ul>
 
+          <AudioRecorder className="mt-auto" />
           <div className="flex items-center mt-auto gap-4">
             <button className="btn btn-outline btn-sm" onClick={handleLogout}>
               Logout

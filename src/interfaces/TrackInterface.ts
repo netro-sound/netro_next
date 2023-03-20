@@ -12,3 +12,7 @@ export interface ITrack {
   duration_ms: number;
   thumbnails: IThumbnail[];
 }
+
+export interface ITrackPrediction {
+  [key: string]: number;
+}

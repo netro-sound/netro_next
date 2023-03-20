@@ -25,7 +25,7 @@ export default function Page({}: Props) {
     useExecuteAsync(fetchArtists);
 
   async function fetchArtists() {
-    const data = await ArtistService.fetch();
+    const data = await ArtistService.fetchAll();
     setPagination(data);
     setArtists(data.results);
   }
@@ -37,7 +37,7 @@ export default function Page({}: Props) {
     const params = new URLSearchParams(new URL(pagination.next).search);
     const nextPage = parseInt(params.get('page') || '1');
 
-    const data = await ArtistService.fetch('', nextPage);
+    const data = await ArtistService.fetchAll('', nextPage);
     setPagination(data);
     setArtists((prevState) => [...prevState, ...data.results]);
     setIsFetching(false);

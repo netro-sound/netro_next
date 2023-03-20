@@ -25,7 +25,7 @@ export default function Page({}: Props) {
     useExecuteAsync(fetchTracks);
 
   async function fetchTracks() {
-    const data = await TrackService.fetch();
+    const data = await TrackService.fetchAll();
     setPagination(data);
     setTracks(data.results);
   }
@@ -37,7 +37,7 @@ export default function Page({}: Props) {
     const params = new URLSearchParams(new URL(pagination.next).search);
     const nextPage = parseInt(params.get('page') || '1');
 
-    const data = await TrackService.fetch('', nextPage);
+    const data = await TrackService.fetchAll('', nextPage);
     setPagination(data);
     setTracks((prevState) => [...prevState, ...data.results]);
     setIsFetching(false);

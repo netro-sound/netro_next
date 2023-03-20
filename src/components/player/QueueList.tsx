@@ -18,7 +18,7 @@ export default function QueueList({}: Props) {
   let [referenceElement, setReferenceElement] = useState<HTMLElement | null>();
   let [popperElement, setPopperElement] = useState<HTMLElement | null>();
   let { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: 'top',
+    placement: 'top-end',
     modifiers: [
       {
         name: 'offset',

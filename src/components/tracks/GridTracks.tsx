@@ -1,4 +1,4 @@
-import { ITrack } from '@/interfaces/TrackInterface';
+import { ITrack, ITrackPrediction } from '@/interfaces/TrackInterface';
 import { classNames, formatTime } from '@/utils';
 import { RiPlayFill } from 'react-icons/ri';
 import ImageSkeleton from '@/components/skeletons/ImageSkeleton';
@@ -10,9 +10,10 @@ import GridWrapper from '@/components/GridWrapper';
 
 type Props = {
   tracks: ITrack[];
+  predictions?: ITrackPrediction;
 };
 
-export function GridTracks({ tracks }: Props) {
+export function GridTracks({ tracks, predictions }: Props) {
   const [changeTrack, setQueue] = usePlayerStore((state) => [
     state.changeTrack,
     state.setQueue,
@@ -84,8 +85,13 @@ export function GridTracks({ tracks }: Props) {
               key={track.id}
               aria-label="column"
               className={classNames(
-                'flex justify-start items-center group cursor-pointer w-full gap-4 px-2',
-                checkedTracks.includes(track) && 'bg-base-200'
+                'flex justify-start items-center group cursor-pointer w-full gap-4 px-2 rounded-box',
+                checkedTracks.includes(track) && 'bg-base-200',
+                predictions
+                  ? Math.max(...Object.values(predictions)) ===
+                      predictions?.[track.spotify_id] &&
+                      'bg-primary bg-opacity-60'
+                  : null
               )}
               onContextMenu={(ev) => handleContext(ev, track)}
             >
@@ -123,6 +129,13 @@ export function GridTracks({ tracks }: Props) {
                   {track.artists.map((i) => i.name).join(', ')}
                 </p>
               </div>
+              {predictions ? (
+                <p className="text-sm font-bold whitespace-nowrap  mr-2">
+                  {predictions?.[track.spotify_id]
+                    ? `${(predictions?.[track.spotify_id] * 100).toFixed(2)} %`
+                    : `0 %`}
+                </p>
+              ) : null}
               <p className="text-sm font-light ml-auto mr-2">
                 {formatTime(track.duration_ms / 1000)}
               </p>

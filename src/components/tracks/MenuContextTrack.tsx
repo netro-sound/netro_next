@@ -4,6 +4,7 @@ import { ITrack } from '@/interfaces/TrackInterface';
 import usePlayerStore from '@/stores/usePlayerStore';
 import { useMemo } from 'react';
 import MenuContext from '@/components/MenuContext';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 type Props = {
   points: ContextMenuPoints;
@@ -17,6 +18,8 @@ export default function MenuContextTrack({ points, show, tracks }: Props) {
     state.setQueue,
     state.changeTrack,
   ]);
+
+  const [user] = useAuthStore((state) => [state.user]);
 
   const menuItems = useMemo(
     () =>
@@ -40,8 +43,14 @@ export default function MenuContextTrack({ points, show, tracks }: Props) {
           id: 'download',
           onClick: downloadTrack,
           single: true,
+          restrict: true,
         },
-      ].filter((item) => (item.single ? tracks.length === 1 : true)),
+      ].filter(
+        (item) =>
+          (item.single ? tracks.length === 1 : true) &&
+          item.restrict &&
+          user?.is_staff
+      ),
     [tracks]
   );
 
@@ -51,7 +60,7 @@ export default function MenuContextTrack({ points, show, tracks }: Props) {
 
   function downloadTrack() {
     const link = document.createElement('a');
-    link.href = concatAPIUrl(`/v1/tracks/${tracks[0].id}/download`);
+    link.href = concatAPIUrl(`/v1/tracks/${tracks[0].spotify_id}/download`);
     link.download = tracks[0].spotify_id;
     link.click();
   }

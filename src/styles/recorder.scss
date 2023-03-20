@@ -1,0 +1,68 @@
+$spin-time: 2s;
+$circle-color: #ffaa00;
+$displacement: 1.5%;
+
+.circles {
+    position: absolute;
+    margin: 0 auto;
+
+    //top: 50%;
+    left: 50%;
+    transform: translate3D(-50%, -50%, 0);
+}
+
+.circle {
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    // border: $circle-stroke solid transparent;
+    border-radius: 121% 128% 125% 124%/125% 120% 127% 125%;
+    &:nth-child(1) {
+        transform-origin: 50%-$displacement 50%;
+        animation: spin1 $spin-time linear infinite;
+        background: currentColor;
+    }
+    &:nth-child(2) {
+        transform-origin: 50% 50%+$displacement;
+        animation: spin2 $spin-time linear infinite;
+        background: currentColor;
+    }
+    &:nth-child(3) {
+        transform-origin: 50%+$displacement 50%;
+        animation: spin3 $spin-time linear infinite;
+        background: currentColor;
+    }
+}
+
+@keyframes spin1 {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spin2 {
+    0% {
+        transform: rotate(-144deg);
+    }
+    100% {
+        transform: rotate(216deg);
+    }
+}
+
+@keyframes spin3 {
+    0% {
+        transform: rotate(216deg);
+    }
+    100% {
+        transform: rotate(-144deg);
+    }
+}
+
+body,
+html {
+    background-color: black;
+}
