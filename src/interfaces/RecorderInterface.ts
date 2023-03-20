@@ -5,7 +5,6 @@ export type Recorder = {
   initRecording: boolean;
   mediaStream: MediaStream | null;
   mediaRecorder: MediaRecorder | null;
-  audio: string | null;
   audioBlob: Blob | null;
 };
 

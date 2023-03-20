@@ -1,7 +1,7 @@
 import useRecorder from '@/hooks/useRecorder';
 import { UseRecorder } from '@/interfaces/RecorderInterface';
 import { classNames, formatTime, objectFormData } from '@/utils';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RiMic2Fill, RiPauseFill, RiPlayFill } from 'react-icons/ri';
 import {
   IExperiment,
@@ -27,11 +27,14 @@ export default function AudioRecorder({ className }: Props) {
     minTime,
     maxTime
   );
-  const { audio, audioBlob } = recorderState;
+  const { audioBlob } = recorderState;
+  const [recordBlob, setRecordBlob] = useState<Blob | null>(null);
   const { recordingMiliseconds, initRecording } = recorderState;
   const { startRecording, saveRecording, cancelRecording } = handlers;
   const [session] = useAuthStore((state) => [state.session]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [audioURL, setAudioURL] = useState<string | null>(null);
 
   const audioElement = useRef<HTMLAudioElement>(null);
 
@@ -43,19 +46,13 @@ export default function AudioRecorder({ className }: Props) {
     { id: 'svm', label: 'Support Vector Machine' },
   ];
 
-  async function handlePlayPause() {
-    if (audioElement.current?.paused) {
-      audioElement.current?.play();
-      setIsPlaying(true);
-    } else {
-      audioElement.current?.pause();
-      setIsPlaying(false);
-    }
-  }
-
   async function handleButton() {
-    if (audio) {
-      handlePlayPause();
+    if (recordBlob) {
+      if (audioElement.current?.paused) {
+        await audioElement.current?.play();
+      } else {
+        audioElement.current?.pause();
+      }
     } else if (initRecording) {
       await saveRecording();
     } else {
@@ -63,8 +60,31 @@ export default function AudioRecorder({ className }: Props) {
     }
   }
 
+  function handleUploadAudio(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'audio/wav';
+
+    input.click();
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (!e?.target?.result) return;
+      const blob = new Blob([e.target.result], { type: 'audio/wav' });
+      setRecordBlob(blob);
+    };
+
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      reader.readAsArrayBuffer(file);
+    };
+  }
+
   async function onSubmit(data: IExperimentQueryCreate) {
-    if (!audioBlob) return;
+    if (!recordBlob) return;
 
     if (recordingMiliseconds < minTime)
       return toastError('Recording too short');
@@ -72,7 +92,7 @@ export default function AudioRecorder({ className }: Props) {
 
     const formData = objectFormData({
       ...data,
-      query_track: new File([audioBlob], 'query.wav', { type: 'audio/wav' }),
+      query_track: new File([recordBlob], 'query.wav', { type: 'audio/wav' }),
     });
 
     ExperimentQuery.create(formData).then((data) => {
@@ -89,21 +109,38 @@ export default function AudioRecorder({ className }: Props) {
     }
   }, [session]);
 
+  function handleEnded() {
+    setIsPlaying(false);
+  }
+
+  function handlePlay() {
+    setIsPlaying(true);
+  }
+
+  function handlePause() {
+    setIsPlaying(false);
+  }
+
+  function handleDuration() {
+    setDuration(audioElement.current?.duration || 0);
+  }
+
   useEffect(() => {
-    function handleEnded() {
-      setIsPlaying(false);
-    }
+    if (audioBlob) setRecordBlob(audioBlob);
+  }, [audioBlob]);
 
-    if (audioElement.current) {
-      audioElement.current.addEventListener('ended', handleEnded);
-    }
+  useEffect(() => {
+    if (!recordBlob) return;
 
-    return () => {
-      if (audioElement.current) {
-        audioElement.current.removeEventListener('ended', handleEnded);
-      }
-    };
-  }, [audioElement.current]);
+    const url = URL.createObjectURL(recordBlob);
+    setAudioURL(url);
+  }, [recordBlob]);
+
+  const handleCancel = () => {
+    cancelRecording();
+    setRecordBlob(null);
+    setAudioURL(null);
+  };
 
   return (
     <div className={classNames(className)}>
@@ -114,6 +151,7 @@ export default function AudioRecorder({ className }: Props) {
             className="relative h-32 w-32 outline-none mx-auto"
             title="Start recording"
             onClick={handleButton}
+            onContextMenu={handleUploadAudio}
           >
             <div
               className={classNames(
@@ -127,16 +165,18 @@ export default function AudioRecorder({ className }: Props) {
               <div className="circle"></div>
             </div>
             <div className="absolute top-0 left-0 text-primary-content h-full w-full flex flex-col items-center justify-center">
-              {audio ? (
-                !isPlaying ? (
-                  <RiPlayFill className="text-4xl" />
-                ) : (
+              {recordBlob ? (
+                isPlaying ? (
                   <RiPauseFill className="text-4xl" />
+                ) : (
+                  <RiPlayFill className="text-4xl" />
                 )
               ) : (
                 <RiMic2Fill className="text-4xl" />
               )}
-              {formatTime(recordingMiliseconds / 1000)}
+              {recordBlob
+                ? formatTime(duration)
+                : formatTime(recordingMiliseconds / 1000)}
             </div>
           </button>
         </div>
@@ -150,7 +190,11 @@ export default function AudioRecorder({ className }: Props) {
             {...register('experiment', { required: true })}
           >
             {experiments.map((experiment) => (
-              <option value={experiment.id} className="truncate">
+              <option
+                value={experiment.id}
+                className="truncate"
+                key={experiment.id}
+              >
                 {experiment.dataset.total_tracks} - {experiment.id}
               </option>
             ))}
@@ -165,7 +209,7 @@ export default function AudioRecorder({ className }: Props) {
             {...register('model', { required: true })}
           >
             {modelChoices.map((model) => (
-              <option value={model.id} className="truncate">
+              <option value={model.id} className="truncate" key={model.id}>
                 {model.label}
               </option>
             ))}
@@ -174,22 +218,31 @@ export default function AudioRecorder({ className }: Props) {
         <div className="flex items-center justify-center gap-2 mt-2">
           <button
             type="button"
-            onClick={cancelRecording}
+            onClick={handleCancel}
             className="btn btn-xs"
-            disabled={!audioBlob}
+            disabled={!recordBlob}
           >
             Cancel
           </button>
           <button
             type="submit"
             className="btn btn-xs btn-primary"
-            disabled={!audioBlob}
+            disabled={!recordBlob}
           >
             Predict
           </button>
         </div>
       </form>
-      {audio && <audio src={audio} ref={audioElement} />}
+      {audioURL && (
+        <audio
+          src={audioURL}
+          ref={audioElement}
+          onPlay={handlePlay}
+          onPause={handlePause}
+          onEnded={handleEnded}
+          onDurationChange={handleDuration}
+        />
+      )}
     </div>
   );
 }

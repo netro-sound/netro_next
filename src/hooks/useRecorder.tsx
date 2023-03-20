@@ -13,7 +13,6 @@ const initialState: Recorder = {
   initRecording: false,
   mediaStream: null,
   mediaRecorder: null,
-  audio: null,
   audioBlob: null,
 };
 
@@ -105,7 +104,7 @@ export default function useRecorder(
       };
 
       recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
+        const blob = new Blob(chunks, { type: 'audio/wav' });
         chunks = [];
 
         setRecorderState((prevState: Recorder) => {
@@ -113,7 +112,6 @@ export default function useRecorder(
             return {
               ...initialState,
               recordingMiliseconds: prevState.recordingMiliseconds,
-              audio: window.URL.createObjectURL(blob),
               audioBlob: blob,
             };
           else return initialState;

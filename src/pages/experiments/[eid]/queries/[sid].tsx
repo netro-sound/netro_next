@@ -108,7 +108,7 @@ export default function Page({}: Props) {
     <>
       <Hero />
       <ContentWrapper>
-        {query && (
+        {query && sid && (
           <div>
             <div className="stats w-full">
               <div className="stat">
