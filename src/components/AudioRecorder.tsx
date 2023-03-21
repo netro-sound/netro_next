@@ -129,7 +129,11 @@ export default function AudioRecorder({ className }: Props) {
   }
 
   function handleDuration() {
-    setDuration(audioElement.current?.duration || 0);
+    if (audioElement.current?.duration == Infinity) {
+      setDuration(recordingMiliseconds / 1000);
+    } else {
+      setDuration(audioElement.current?.duration || 0);
+    }
   }
 
   useEffect(() => {
@@ -152,7 +156,7 @@ export default function AudioRecorder({ className }: Props) {
   return (
     <div className={classNames(className)}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex items-center">
+        <div className="flex flex-col justify-center items-center">
           <button
             type="button"
             className="relative h-32 w-32 outline-none mx-auto"
