@@ -37,7 +37,7 @@ export interface IMetric {
 export interface IExperimentQuery {
   id: string;
   experiment: number;
-  model: number;
+  model: string;
   query_track: string;
   user: number;
   execution_json: { [key: string]: any };

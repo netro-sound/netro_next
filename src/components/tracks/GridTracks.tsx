@@ -7,6 +7,7 @@ import usePlayerStore from '@/stores/usePlayerStore';
 import useContextMenu from '@/hooks/useContextMenu';
 import MenuContext from '@/components/tracks/MenuContextTrack';
 import GridWrapper from '@/components/GridWrapper';
+import Link from 'next/link';
 
 type Props = {
   tracks: ITrack[];
@@ -81,11 +82,10 @@ export function GridTracks({ tracks, predictions }: Props) {
         {tracks.map((track, index) => {
           return (
             <div
-              onClick={(ev) => handleTrackClick(ev, track)}
               key={track.id}
               aria-label="column"
               className={classNames(
-                'flex justify-start items-center group cursor-pointer w-full gap-4 px-2 rounded-box',
+                'flex justify-start items-center group w-full gap-4 px-2 rounded-box',
                 checkedTracks.includes(track) && 'bg-base-200',
                 predictions
                   ? Math.max(...Object.values(predictions)) ===
@@ -98,7 +98,10 @@ export function GridTracks({ tracks, predictions }: Props) {
               <div className="text-right w-4">
                 <p className="text-sm font-light">{index + 1}</p>
               </div>
-              <div className="flex-none">
+              <div
+                className="flex-none cursor-pointer"
+                onClick={(ev) => handleTrackClick(ev, track)}
+              >
                 <div className="mask mask-squircle relative">
                   <div
                     className={classNames(
@@ -119,14 +122,29 @@ export function GridTracks({ tracks, predictions }: Props) {
               </div>
 
               <div className="overflow-x-clip w-full">
-                <p className="truncate" title={track.name}>
+                <Link
+                  href={`/tracks/${track.spotify_id}`}
+                  className="truncate hover:text-primary transition duration-300"
+                  title={track.name}
+                >
                   {track.name}
-                </p>
+                </Link>
                 <p
                   className="text-sm font-light truncate"
                   title={track.artists.map((i) => i.name).join(', ')}
                 >
-                  {track.artists.map((i) => i.name).join(', ')}
+                  {track.artists.map((i, index) => (
+                    <React.Fragment key={i.id}>
+                      {index !== 0 && ', '}
+                      <Link
+                        href={`/artists/${i.spotify_id}`}
+                        title={i.name}
+                        className="hover:text-primary transition duration-300"
+                      >
+                        {i.name}
+                      </Link>
+                    </React.Fragment>
+                  ))}
                 </p>
               </div>
               {predictions ? (

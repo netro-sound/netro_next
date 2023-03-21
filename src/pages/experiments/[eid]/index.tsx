@@ -24,6 +24,7 @@ export default function Page({}: Props) {
   const [session] = useAuthStore((state) => [state.session]);
   const { execute: executeRefresh, isLoading: isRefreshing } =
     useExecuteAsync(fetchQueries);
+  const [groups, setGroups] = useState<{ [key: string]: IExperimentQuery[] }>();
 
   const router = useRouter();
   const pid = router.query.eid as string;
@@ -32,6 +33,14 @@ export default function Page({}: Props) {
     const data = await Experiment.fetchQueries(pid);
     setPagination(data);
     setQueries(data.results);
+
+    const groups = data.results.reduce((acc, query) => {
+      if (!acc[query.model]) acc[query.model] = [];
+      acc[query.model].push(query);
+      return acc;
+    }, {} as { [key: string]: IExperimentQuery[] });
+
+    setGroups(groups);
   }
 
   async function loadMore() {
@@ -70,7 +79,16 @@ export default function Page({}: Props) {
             />
           </button>
         </div>
-        <GridQueries queries={queries} experimentID={pid} />
+        {!!groups && (
+          <div className="mt-4">
+            {Object.keys(groups).map((key) => (
+              <div key={key}>
+                <h2 className="text-lg font-semibold">{key.toUpperCase()}</h2>
+                <GridQueries queries={groups[key]} experimentID={pid} />
+              </div>
+            ))}
+          </div>
+        )}
         <InfiniteScroller callback={loadMore}>
           <RiLoaderFill className="animate-spin text-lg mx-auto" />
         </InfiniteScroller>
