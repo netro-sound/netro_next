@@ -16,7 +16,8 @@ import ExperimentQuery from '@/services/ExperimentQuery';
 import Experiment from '@/services/Experiment';
 import { IDataset } from '@/interfaces/DatasetInterface';
 import { concatAPIUrl } from '@/utils';
-import { RiPauseFill, RiPlayFill } from 'react-icons/ri';
+import { RiLoaderFill, RiPauseFill, RiPlayFill } from 'react-icons/ri';
+import InfiniteScroller from '@/components/InfiniteScroller';
 
 type Props = {};
 
@@ -24,14 +25,16 @@ export default function Page({}: Props) {
   const [pagination, setPagination] = useState<IPagination<ITrack>>(
     {} as IPagination<ITrack>
   );
-  const [query, setQuery] = useState<IExperimentQuery>({} as IExperimentQuery);
-  const [experiment, setExperiment] = useState<IExperiment>({} as IExperiment);
-  const [dataset, setDataset] = useState<IDataset>({} as IDataset);
+  const [query, setQuery] = useState<IExperimentQuery>();
+  const [experiment, setExperiment] = useState<IExperiment>();
+  const [dataset, setDataset] = useState<IDataset>();
   const [tracks, setTracks] = useState<ITrack[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const [session] = useAuthStore((state) => [state.session]);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioElement = useRef<HTMLAudioElement>(null);
+  const [datasetID, setDatasetID] = useState(0);
+  const [predictedTracks, setPredictedTracks] = useState<ITrack[]>([]);
 
   // const { execute: executeRefresh, isLoading: isRefreshing } = useExecuteAsync(
   //   async () => fetchTracks(datasetID)
@@ -47,30 +50,37 @@ export default function Page({}: Props) {
     setTracks(data.results);
   }
 
+  async function fetchPredictedTracks(queryID: string) {
+    const data = await ExperimentQuery.fetchPredictions(queryID);
+    setPredictedTracks(data);
+  }
+
   async function fetchExperiment() {
     const data = await Experiment.fetch(eid);
     setExperiment(data);
     setDataset(data.dataset);
     fetchTracks(data.dataset.id);
+    setDatasetID(data.dataset.id);
   }
 
   async function fetchExperimentQuery() {
     const data = await ExperimentQuery.fetch(sid);
     setQuery(data);
+    fetchPredictedTracks(data.id);
   }
 
-  // async function loadMore() {
-  //   if (!pagination.next) return;
-  //   setIsFetching(true);
-  //
-  //   const params = new URLSearchParams(new URL(pagination.next).search);
-  //   const nextPage = parseInt(params.get('page') || '1');
-  //
-  //   const data = await DatasetService.fetchTracks(spotifyID, nextPage);
-  //   setPagination(data);
-  //   setTracks((prevState) => [...prevState, ...data.results]);
-  //   setIsFetching(false);
-  // }
+  async function loadMore() {
+    if (!pagination.next) return;
+    setIsFetching(true);
+
+    const params = new URLSearchParams(new URL(pagination.next).search);
+    const nextPage = parseInt(params.get('page') || '1');
+
+    const data = await DatasetService.fetchTracks(datasetID, nextPage);
+    setPagination(data);
+    setTracks((prevState) => [...prevState, ...data.results]);
+    setIsFetching(false);
+  }
 
   useEffect(() => {
     !!session && !!eid && fetchExperiment();
@@ -159,15 +169,22 @@ export default function Page({}: Props) {
             </div>
           </div>
         )}
-        <div className="flex w-full">
+        <GridTracks tracks={predictedTracks} />
+
+        <div className="flex w-full pt-20">
           <h1 className="text-xl">
             <Skeleton as="span" className="h-8 w-32 bg-base-200 rounded-box">
-              {pagination.count ? `${pagination.count} tracks` : null}
+              {pagination.count
+                ? `${pagination.count} tracks in dataset`
+                : null}
             </Skeleton>
           </h1>
         </div>
 
-        <GridTracks tracks={tracks} predictions={query?.prediction_accuracy} />
+        <GridTracks tracks={tracks} />
+        <InfiniteScroller callback={loadMore}>
+          <RiLoaderFill className="animate-spin text-lg mx-auto" />
+        </InfiniteScroller>
       </ContentWrapper>
     </>
   );

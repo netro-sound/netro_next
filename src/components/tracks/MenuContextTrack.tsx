@@ -48,8 +48,7 @@ export default function MenuContextTrack({ points, show, tracks }: Props) {
       ].filter(
         (item) =>
           (item.single ? tracks.length === 1 : true) &&
-          item.restrict &&
-          user?.is_staff
+          (!!item.restrict || user?.is_staff)
       ),
     [tracks]
   );

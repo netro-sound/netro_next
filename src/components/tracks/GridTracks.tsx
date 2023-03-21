@@ -1,4 +1,4 @@
-import { ITrack, ITrackPrediction } from '@/interfaces/TrackInterface';
+import { ITrack } from '@/interfaces/TrackInterface';
 import { classNames, formatTime } from '@/utils';
 import { RiPlayFill } from 'react-icons/ri';
 import ImageSkeleton from '@/components/skeletons/ImageSkeleton';
@@ -8,10 +8,11 @@ import useContextMenu from '@/hooks/useContextMenu';
 import MenuContext from '@/components/tracks/MenuContextTrack';
 import GridWrapper from '@/components/GridWrapper';
 import Link from 'next/link';
+import { IResultQuery } from '@/interfaces/ExperimentInterface';
 
 type Props = {
   tracks: ITrack[];
-  predictions?: ITrackPrediction;
+  predictions?: IResultQuery;
 };
 
 export function GridTracks({ tracks, predictions }: Props) {
@@ -86,12 +87,7 @@ export function GridTracks({ tracks, predictions }: Props) {
               aria-label="column"
               className={classNames(
                 'flex justify-start items-center group w-full gap-4 px-2 rounded-box',
-                checkedTracks.includes(track) && 'bg-base-200',
-                predictions
-                  ? Math.max(...Object.values(predictions)) ===
-                      predictions?.[track.spotify_id] &&
-                      'bg-primary bg-opacity-60'
-                  : null
+                checkedTracks.includes(track) && 'bg-base-200'
               )}
               onContextMenu={(ev) => handleContext(ev, track)}
             >
@@ -108,7 +104,7 @@ export function GridTracks({ tracks, predictions }: Props) {
                       'absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition duration-300 items-center flex justify-center'
                     )}
                   >
-                    <RiPlayFill className="text-primary" />
+                    <RiPlayFill className="text-primary text-4xl" />
                   </div>
                   {
                     <ImageSkeleton
@@ -147,11 +143,9 @@ export function GridTracks({ tracks, predictions }: Props) {
                   ))}
                 </p>
               </div>
-              {predictions ? (
+              {track.confidence ? (
                 <p className="text-sm font-bold whitespace-nowrap  mr-2">
-                  {predictions?.[track.spotify_id]
-                    ? `${(predictions?.[track.spotify_id] * 100).toFixed(2)} %`
-                    : `0 %`}
+                  {(track.confidence * 100).toFixed(2)} %
                 </p>
               ) : null}
               <p className="text-sm font-light ml-auto mr-2">

@@ -4,10 +4,22 @@ import {
   IExperimentQueryCreate,
 } from '@/interfaces/ExperimentInterface';
 import { mlAxios } from '@/lib/axios';
+import { ITrack } from '@/interfaces/TrackInterface';
 
 class ExperimentQueryService extends BaseService<IExperimentQuery> {
   constructor() {
     super('/queries', mlAxios);
+  }
+
+  async fetchPredictions(id: string): Promise<ITrack[]> {
+    try {
+      const response = await this.client.get(
+        this.path + '/' + id + '/predictions'
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async queryTrack() {

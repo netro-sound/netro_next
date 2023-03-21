@@ -80,7 +80,7 @@ export default function Page({}: Props) {
           </button>
         </div>
         {!!groups && (
-          <div className="mt-4">
+          <div className="mt-4 space-y-12">
             {Object.keys(groups).map((key) => (
               <div key={key}>
                 <h2 className="text-lg font-semibold">{key.toUpperCase()}</h2>

@@ -1,5 +1,4 @@
 import { IDataset } from '@/interfaces/DatasetInterface';
-import { ITrackPrediction } from '@/interfaces/TrackInterface';
 
 export interface IExperiment {
   id: string;
@@ -34,6 +33,12 @@ export interface IMetric {
   classes_report: { [key: string]: any };
 }
 
+export interface IResultQuery {
+  track: string;
+  confidence: number;
+  support: number;
+}
+
 export interface IExperimentQuery {
   id: string;
   experiment: number;
@@ -41,8 +46,7 @@ export interface IExperimentQuery {
   query_track: string;
   user: number;
   execution_json: { [key: string]: any };
-  prediction_json: [[number, string]];
-  prediction_accuracy: ITrackPrediction;
+  result_json: IResultQuery[];
 }
 
 export interface IExperimentQueryCreate {

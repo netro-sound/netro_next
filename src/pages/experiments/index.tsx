@@ -1,12 +1,10 @@
 import { IPagination } from '@/interfaces/PaginationInterface';
 import Hero from '@/components/layouts/Hero';
 import ContentWrapper from '@/components/layouts/ContentWrapper';
-import { RiLoaderFill } from 'react-icons/ri';
 import React, { useEffect, useState } from 'react';
 import Skeleton from '@/components/skeletons/Skeleton';
 import { useAuthStore } from '@/stores/useAuthStore';
 import useExecuteAsync from '@/hooks/useExecuteAsync';
-import InfiniteScroller from '@/components/InfiniteScroller';
 import { IExperiment } from '@/interfaces/ExperimentInterface';
 import { GridExperiments } from '@/components/experiments/GridExperiments';
 import Experiment from '@/services/Experiment';
@@ -75,13 +73,16 @@ export default function Page({}: Props) {
           {/*  />*/}
           {/*</button>*/}
         </div>
-        {groups &&
-          Object.keys(groups).map((key) => (
-            <div key={key}>
-              <h2 className="text-lg font-bold mt-4">{key} tracks</h2>
-              <GridExperiments experiments={groups[parseInt(key)]} />
-            </div>
-          ))}
+        {groups && (
+          <div className="mt-4 space-y-12">
+            {Object.keys(groups).map((key) => (
+              <div key={key}>
+                <h2 className="text-lg font-bold mt-4">{key} tracks</h2>
+                <GridExperiments experiments={groups[parseInt(key)]} />
+              </div>
+            ))}
+          </div>
+        )}
         {/*<InfiniteScroller callback={loadMore}>*/}
         {/*  <RiLoaderFill className="animate-spin text-lg mx-auto" />*/}
         {/*</InfiniteScroller>*/}

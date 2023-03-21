@@ -11,8 +11,6 @@ export interface ITrack {
   albums: IAlbum[];
   duration_ms: number;
   thumbnails: IThumbnail[];
-}
-
-export interface ITrackPrediction {
-  [key: string]: number;
+  confidence?: number;
+  support?: number;
 }
