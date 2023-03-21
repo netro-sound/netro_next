@@ -2,7 +2,12 @@ import useRecorder from '@/hooks/useRecorder';
 import { UseRecorder } from '@/interfaces/RecorderInterface';
 import { classNames, formatTime, objectFormData } from '@/utils';
 import React, { useEffect, useRef, useState } from 'react';
-import { RiMic2Fill, RiPauseFill, RiPlayFill } from 'react-icons/ri';
+import {
+  RiLoader2Fill,
+  RiMic2Fill,
+  RiPauseFill,
+  RiPlayFill,
+} from 'react-icons/ri';
 import {
   IExperiment,
   IExperimentQueryCreate,
@@ -35,6 +40,7 @@ export default function AudioRecorder({ className }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const audioElement = useRef<HTMLAudioElement>(null);
 
@@ -86,10 +92,10 @@ export default function AudioRecorder({ className }: Props) {
   async function onSubmit(data: IExperimentQueryCreate) {
     if (!recordBlob) return;
 
-    if (recordingMiliseconds < minTime)
-      return toastError('Recording too short');
-    if (recordingMiliseconds > maxTime) return toastError('Recording too long');
+    if (duration < minTime / 1000) return toastError('Recording too short');
+    if (duration > maxTime / 1000) return toastError('Recording too long');
 
+    setIsSubmitting(true);
     const formData = objectFormData({
       ...data,
       query_track: new File([recordBlob], 'query.wav', { type: 'audio/wav' }),
@@ -98,6 +104,7 @@ export default function AudioRecorder({ className }: Props) {
     ExperimentQuery.create(formData).then((data) => {
       toastSuccess('Experiment created');
       router.push(`/experiments/${data.experiment}/queries/${data.id}`);
+      setIsSubmitting(false);
     });
   }
 
@@ -165,18 +172,24 @@ export default function AudioRecorder({ className }: Props) {
               <div className="circle"></div>
             </div>
             <div className="absolute top-0 left-0 text-primary-content h-full w-full flex flex-col items-center justify-center">
-              {recordBlob ? (
-                isPlaying ? (
-                  <RiPauseFill className="text-4xl" />
-                ) : (
-                  <RiPlayFill className="text-4xl" />
-                )
+              {isSubmitting ? (
+                <RiLoader2Fill className="text-4xl animate-spin" />
               ) : (
-                <RiMic2Fill className="text-4xl" />
+                <>
+                  {recordBlob ? (
+                    isPlaying ? (
+                      <RiPauseFill className="text-4xl" />
+                    ) : (
+                      <RiPlayFill className="text-4xl" />
+                    )
+                  ) : (
+                    <RiMic2Fill className="text-4xl" />
+                  )}
+                  {recordBlob
+                    ? formatTime(duration)
+                    : formatTime(recordingMiliseconds / 1000)}
+                </>
               )}
-              {recordBlob
-                ? formatTime(duration)
-                : formatTime(recordingMiliseconds / 1000)}
             </div>
           </button>
         </div>
@@ -220,16 +233,19 @@ export default function AudioRecorder({ className }: Props) {
             type="button"
             onClick={handleCancel}
             className="btn btn-xs"
-            disabled={!recordBlob}
+            disabled={!recordBlob || isSubmitting}
           >
             Cancel
           </button>
           <button
             type="submit"
             className="btn btn-xs btn-primary"
-            disabled={!recordBlob}
+            disabled={!recordBlob || isSubmitting}
           >
             Predict
+            {isSubmitting ? (
+              <RiLoader2Fill className="text-lg animate-spin" />
+            ) : null}
           </button>
         </div>
       </form>
