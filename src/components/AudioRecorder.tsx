@@ -71,7 +71,7 @@ export default function AudioRecorder({ className }: Props) {
 
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'audio/wav';
+    input.accept = 'audio/*';
 
     input.click();
 
