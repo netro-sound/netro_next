@@ -144,9 +144,20 @@ export function GridTracks({ tracks, predictions }: Props) {
                 </p>
               </div>
               {track.confidence ? (
-                <p className="text-sm font-bold whitespace-nowrap  mr-2">
-                  {(track.confidence * 100).toFixed(2)} %
-                </p>
+                <>
+                  <p
+                    className="text-sm font-bold whitespace-nowrap mr-2"
+                    title="Support"
+                  >
+                    {track.support}
+                  </p>
+                  <p
+                    className="text-sm font-bold whitespace-nowrap mr-2"
+                    title="Confidence"
+                  >
+                    {(track.confidence * 100).toFixed(2)} %
+                  </p>
+                </>
               ) : null}
               <p className="text-sm font-light ml-auto mr-2">
                 {formatTime(track.duration_ms / 1000)}
