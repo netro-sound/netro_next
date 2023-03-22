@@ -24,7 +24,7 @@ type Props = {
 };
 export default function AudioRecorder({ className }: Props) {
   const { register, handleSubmit, watch } = useForm<IExperimentQueryCreate>({});
-  const maxTime = 30000;
+  const maxTime = 1000 * 60 * 10;
   const minTime = 5000;
 
   const [experiments, setExperiments] = useState<IExperiment[]>([]);
