@@ -48,6 +48,7 @@ export function GridQueries({ queries, experimentID }: Props) {
               >
                 <ImageSkeleton
                   alt={query.id}
+                  src={`/v1/tracks/${query.result_json[0].track}/thumbnail/`}
                   className="w-full rounded-lg aspect-square"
                 />
 

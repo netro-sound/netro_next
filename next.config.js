@@ -14,7 +14,7 @@ module.exports = withPWA({
     return [
       {
         source: '/v1/:path*',
-        destination: process.env.NEXT_PUBLIC_API_URL + '/v1/:path*',
+        destination: process.env.NEXT_PUBLIC_API_URL + '/:path*',
         permanent: true,
       },
     ];
