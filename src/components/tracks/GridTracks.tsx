@@ -143,7 +143,7 @@ export function GridTracks({ tracks, predictions }: Props) {
                   ))}
                 </p>
               </div>
-              {track.confidence ? (
+              {track.accuracy ? (
                 <>
                   <p
                     className="text-sm font-bold whitespace-nowrap mr-2"
@@ -153,9 +153,9 @@ export function GridTracks({ tracks, predictions }: Props) {
                   </p>
                   <p
                     className="text-sm font-bold whitespace-nowrap mr-2"
-                    title="Confidence"
+                    title="Accuracy"
                   >
-                    {(track.confidence * 100).toFixed(2)} %
+                    {(track.accuracy * 100).toFixed(2)} %
                   </p>
                 </>
               ) : null}

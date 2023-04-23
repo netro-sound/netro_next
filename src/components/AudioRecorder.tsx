@@ -101,11 +101,16 @@ export default function AudioRecorder({ className }: Props) {
       query_track: new File([recordBlob], 'query.wav', { type: 'audio/wav' }),
     });
 
-    ExperimentQuery.create(formData).then((data) => {
-      toastSuccess('Experiment created');
-      router.push(`/experiments/${data.experiment}/queries/${data.id}`);
-      setIsSubmitting(false);
-    });
+    ExperimentQuery.create(formData)
+      .then((data) => {
+        toastSuccess('Experiment created');
+        router.push(`/experiments/${data.experiment}/queries/${data.id}`);
+        setIsSubmitting(false);
+      })
+      .catch((err) => {
+        toastError(err.message);
+        setIsSubmitting(false);
+      });
   }
 
   useEffect(() => {

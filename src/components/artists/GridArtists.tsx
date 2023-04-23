@@ -63,7 +63,7 @@ export function GridArtists({ artists }: Props) {
               key={i}
               aria-label="column"
               className={classNames(
-                'flex justify-start items-center group cursor-pointer rounded-box w-full gap-4 bg-base-200 animate-pulse inline-block h-40'
+                'flex justify-start items-center group cursor-pointer rounded-box w-full gap-4 bg-base-200 animate-pulse inline-block aspect-square'
               )}
             />
           ))}

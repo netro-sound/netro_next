@@ -20,7 +20,7 @@ export function GridQueries({ queries, experimentID }: Props) {
               key={i}
               aria-label="column"
               className={classNames(
-                'flex justify-start items-center group cursor-pointer rounded-box w-full gap-4 bg-base-200 animate-pulse inline-block h-40'
+                'flex justify-start items-center group cursor-pointer rounded-box w-full gap-4 bg-base-200 animate-pulse inline-block aspect-square'
               )}
             />
           ))}
@@ -48,7 +48,7 @@ export function GridQueries({ queries, experimentID }: Props) {
               >
                 <ImageSkeleton
                   alt={query.id}
-                  src={`/v1/tracks/${query.result_json[0].track}/thumbnail/`}
+                  src={`/v1/tracks/${query.result_json[0].track}/thumbnail/?w=192`}
                   className="w-full rounded-lg aspect-square"
                 />
 

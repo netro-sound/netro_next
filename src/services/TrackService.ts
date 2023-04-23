@@ -6,6 +6,15 @@ class TrackService extends BaseService<ITrack> {
     super('/tracks');
   }
 
+  async fetchSimilarTracks(spotify_id: string): Promise<ITrack[]> {
+    try {
+      const { data } = await this.client.get(`/tracks/${spotify_id}/similar`);
+      return Promise.resolve(data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
   async fetchTokenAccess(spotify_id: string): Promise<{ token: string }> {
     try {
       const { data } = await this.client.get(`/tracks/${spotify_id}/token`);

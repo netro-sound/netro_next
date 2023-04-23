@@ -35,7 +35,7 @@ export interface IMetric {
 
 export interface IResultQuery {
   track: string;
-  confidence: number;
+  accuracy: number;
   support: number;
 }
 

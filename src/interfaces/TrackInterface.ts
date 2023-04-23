@@ -11,6 +11,6 @@ export interface ITrack {
   albums: IAlbum[];
   duration_ms: number;
   thumbnails: IThumbnail[];
-  confidence?: number;
+  accuracy?: number;
   support?: number;
 }

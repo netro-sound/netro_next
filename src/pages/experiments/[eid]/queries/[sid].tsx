@@ -122,26 +122,6 @@ export default function Page({}: Props) {
           <div>
             <div className="stats w-full">
               <div className="stat">
-                <div className="stat-figure text-primary"></div>
-                <div className="stat-title">Loading Time</div>
-                <div className="stat-value text-primary">
-                  {query.execution_json?.load_time.toFixed(2)} s
-                </div>
-              </div>
-
-              <div className="stat">
-                <div className="stat-title">Preprocessing Time</div>
-                <div className="stat-value text-secondary">
-                  {query.execution_json?.preprocess_time.toFixed(2)} s
-                </div>
-              </div>
-              <div className="stat">
-                <div className="stat-title">Prediction Time</div>
-                <div className="stat-value">
-                  {query.execution_json?.predict_time.toFixed(2)} s
-                </div>
-              </div>
-              <div className="stat">
                 <div className="stat-title">Queried Track</div>
                 <div className="stat-value">
                   {isPlaying ? (
@@ -164,6 +144,38 @@ export default function Page({}: Props) {
                     src={concatAPIUrl(`/ml/queries/${sid}/query_track/`)}
                     ref={audioElement}
                   />
+                </div>
+              </div>
+              <div className="stat">
+                <div className="stat-figure text-primary"></div>
+                <div className="stat-title">Loading Time</div>
+                <div className="stat-value text-primary">
+                  {query.execution_json?.load_time.toFixed(2)} s
+                </div>
+              </div>
+
+              <div className="stat">
+                <div className="stat-title">Preprocessing Time</div>
+                <div className="stat-value text-secondary">
+                  {query.execution_json?.preprocess_time.toFixed(2)} s
+                </div>
+              </div>
+              <div className="stat">
+                <div className="stat-title">Prediction Time</div>
+                <div className="stat-value">
+                  {query.execution_json?.predict_time.toFixed(2)} s
+                </div>
+              </div>
+              <div className="stat">
+                <div className="stat-title">Supports</div>
+                <div className="stat-value">
+                  {query.execution_json?.supports}
+                </div>
+              </div>
+              <div className="stat">
+                <div className="stat-title">Unique Predictions</div>
+                <div className="stat-value">
+                  {query.execution_json?.predictions}
                 </div>
               </div>
             </div>
