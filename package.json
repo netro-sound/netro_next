@@ -19,7 +19,7 @@
     "date-fns": "^2.29.3",
     "iron-session": "^6.3.1",
     "lodash": "^4.17.21",
-    "netlify-cli": "^13.1.1",
+    "netlify-cli": "^15.1.1",
     "next": "13.1.6",
     "next-pwa": "^5.6.0",
     "next-seo": "^5.15.0",
