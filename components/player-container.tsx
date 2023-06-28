@@ -31,18 +31,7 @@ import CommonSection from "@/components/common-section"
 import ThumbnailImage from "@/components/thumbnail-image"
 import TableTracks from "@/components/tracks/table-tracks"
 
-type Props = {}
-
-export function lyricsToHtml(lyrics: string) {
-  const lines = lyrics.split("\n")
-  const linesMap = lines.map((line, index) => {
-    return <p key={index}>{line}</p>
-  })
-
-  return linesMap
-}
-
-export default function PlayerContainer({}: Props) {
+export default function PlayerContainer() {
   const [
     currentTrack,
     audioTag,
@@ -174,8 +163,13 @@ export default function PlayerContainer({}: Props) {
     setAudioTag(audioElement)
   }, [])
 
-  function renderMoreContent() {
-    return <></>
+  function lyricsToHtml(lyrics: string) {
+    const lines = lyrics.split("\n")
+    const linesMap = lines.map((line, index) => {
+      return <p key={index}>{line}</p>
+    })
+
+    return linesMap
   }
 
   return (

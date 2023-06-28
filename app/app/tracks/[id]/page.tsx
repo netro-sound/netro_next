@@ -12,15 +12,6 @@ import ThumbnailImage, {
   getClosestThumbnail,
 } from "@/components/thumbnail-image"
 
-export function lyricsToHtml(lyrics: string) {
-  const lines = lyrics.split("\n")
-  const linesMap = lines.map((line, index) => {
-    return <p key={index}>{line}</p>
-  })
-
-  return linesMap
-}
-
 export default async function Page({ params }: PageParams) {
   const { trackById: track } = await fetchGraphQL<
     { trackById: TrackType },
@@ -66,6 +57,15 @@ export default async function Page({ params }: PageParams) {
   )
   const thumbnailUrl = thumbnailURL(thumbnail.id)
   const color = await getAverageColor(thumbnailUrl)
+
+  function lyricsToHtml(lyrics: string) {
+    const lines = lyrics.split("\n")
+    const linesMap = lines.map((line, index) => {
+      return <p key={index}>{line}</p>
+    })
+
+    return linesMap
+  }
 
   return (
     <>

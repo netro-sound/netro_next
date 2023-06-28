@@ -1,7 +1,6 @@
 import React from "react"
 
 import { Separator } from "@/components/ui/separator"
-import { lyricsToHtml } from "@/app/app/tracks/[id]/page"
 
 interface CommonSectionProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string
