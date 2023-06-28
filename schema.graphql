@@ -1,0 +1,109 @@
+# This file was generated. Do not edit manually.
+
+schema {
+  query: Query
+}
+
+type AlbumType {
+  albumType: String
+  artists: [ArtistType!]!
+  id: String!
+  label: String
+  name: String
+  popularity: Int
+  spotifyHref: String
+  thumbnails: [ThumbnailType!]!
+  totalTracks: Int
+  tracks: [TrackType!]!
+}
+
+type ArtistType {
+  albums: [AlbumType!]!
+  id: String!
+  name: String
+  spotifyHref: String
+  thumbnails: [ThumbnailType!]!
+  tracks: [TrackType!]!
+}
+
+type DatasetType {
+  description: String
+  id: ID!
+  name: String
+  tracks: [TrackType!]!
+}
+
+type PlaylistType {
+  description: String
+  id: String!
+  name: String
+  protected: Boolean
+  public: Boolean
+  spotifyHref: String
+  thumbnails: [ThumbnailType!]!
+  tracks: [TrackType!]!
+}
+
+type Query {
+  albumById(id: String!): AlbumType
+  albums(limit: Int = 20, page: Int = 1): [AlbumType!]
+  artistById(id: String!): ArtistType
+  artists(limit: Int = 20, page: Int = 1): [ArtistType!]
+  datasetById(id: String!): DatasetType
+  datasets(limit: Int = 20, page: Int = 1): [DatasetType!]
+  playlistById(id: String!): PlaylistType
+  playlists(limit: Int = 20, page: Int = 1): [PlaylistType!]
+  trackById(id: String!): TrackType
+  tracks(albumId: String, artistId: String, datasetId: ID, limit: Int = 20, page: Int = 1, playlistId: String, tracksId: [String]): [TrackType!]
+}
+
+type ThumbnailType {
+  albums: [AlbumType!]!
+  artists: [ArtistType!]!
+  height: Int!
+  id: ID!
+  image: String!
+  playlists: [PlaylistType!]!
+  width: Int!
+}
+
+type TrackType {
+  albums: [AlbumType!]
+  artists: [ArtistType!]
+  audio: String
+  bitrate: Int
+  channels: Int
+  datasets: [DatasetType!]!
+  durationMs: Int
+  explicit: Boolean
+  id: String!
+  lyrics: String
+  name: String
+  playlists: [PlaylistType!]!
+  popularity: Int
+  sampleRate: Int
+  spotifyHref: String
+  status: ApiTrackStatusChoices
+  streamUrl: String
+  thumbnails: [ThumbnailType!]
+  trackNumber: Int
+  youtubeHref: String
+}
+
+"An enumeration."
+enum ApiTrackStatusChoices {
+  "Downloaded"
+  DOWNLOADED
+  "Downloading"
+  DOWNLOADING
+  "Failed"
+  FAILED
+  "Failed Mismatch"
+  FAILED_MISMATCH
+  "Failed Not Found"
+  FAILED_NOT_FOUND
+  "Failed Spotify"
+  FAILED_SPOTIFY
+  "Pending"
+  PENDING
+}
