@@ -1,3 +1,5 @@
+"use client"
+
 import { Separator } from "@/components/ui/separator"
 import CanvasAudioVisualizer from "@/components/audio-visualizer/canvasAudioVisualizer"
 
