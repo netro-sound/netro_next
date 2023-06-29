@@ -1,3 +1,4 @@
+import React from "react"
 import {
   AlbumType,
   ArtistType,
@@ -11,12 +12,34 @@ import { gql } from "graphql-tag"
 import { PageParams } from "@/types/PageParams"
 import fetchGraphQL from "@/lib/client"
 import { thumbnailURL } from "@/lib/utils"
+import CanvasAudioVisualizer from "@/components/audio-visualizer/canvasAudioVisualizer"
 import CommonSection from "@/components/common-section"
 import PlayTracksButton from "@/components/play-tracks-button"
 import ThumbnailImage, {
   getClosestThumbnail,
 } from "@/components/thumbnail-image"
 import TableTracks from "@/components/tracks/table-tracks"
+
+export async function generateMetadata({ params }: PageParams) {
+  const { albumById: album } = await fetchGraphQL<
+    { albumById: AlbumType },
+    unknown
+  >(
+    gql`
+      query AlbumByID($id: String!) {
+        albumById(id: $id) {
+          name
+        }
+      }
+    `,
+    {
+      id: params.id,
+    }
+  )
+  return {
+    title: album.name || "",
+  }
+}
 
 export default async function Page({ params }: PageParams) {
   let flagTracks = false
@@ -76,28 +99,37 @@ export default async function Page({ params }: PageParams) {
         style={{
           backgroundImage: `linear-gradient(to bottom, ${color.rgba}, hsl(var(--background)))`,
         }}
-        className="flex h-[30rem] w-full flex-col gap-4 px-4 py-12 md:h-60 md:flex-row md:items-center"
+        className="relative z-0"
       >
-        <ThumbnailImage
-          alt={album.name || ""}
-          thumbnails={album.thumbnails || []}
-          width={192}
-          height={192}
-          className="aspect-square w-full rounded-md object-cover md:w-48"
-        />
-        <div className="flex w-full flex-row-reverse items-center justify-end gap-4 md:block md:space-y-4">
-          <div>
-            <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-              {album.name}
-            </h1>
-            {/*<h2 className="text-lg text-muted-foreground">*/}
-            {/*  {track.artists?.map((artist) => artist.name).join(", ")}*/}
-            {/*</h2>*/}
-          </div>
-          <PlayTracksButton
-            className="aspect-square h-14 rounded-full p-4 text-2xl"
-            tracks={tracksIds}
+        {/*<div className="absolute left-0 top-0 z-10 h-full w-full">*/}
+        {/*  <CanvasAudioVisualizer*/}
+        {/*    colors={[color.hex, "#fff"]}*/}
+        {/*    className="h-full w-full"*/}
+        {/*  />*/}
+        {/*</div>*/}
+
+        <div className="z-20 flex h-[30rem] w-full flex-col gap-4 px-4 py-12 md:h-60 md:flex-row md:items-center">
+          <ThumbnailImage
+            alt={album.name || ""}
+            thumbnails={album.thumbnails || []}
+            width={192}
+            height={192}
+            className="aspect-square w-full rounded-md object-cover md:w-48"
           />
+          <div className="flex w-full flex-row-reverse items-center justify-end gap-4 md:block md:space-y-4">
+            <div>
+              <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
+                {album.name}
+              </h1>
+              {/*<h2 className="text-lg text-muted-foreground">*/}
+              {/*  {track.artists?.map((artist) => artist.name).join(", ")}*/}
+              {/*</h2>*/}
+            </div>
+            <PlayTracksButton
+              className="aspect-square h-14 rounded-full p-4 text-2xl"
+              tracks={tracksIds}
+            />
+          </div>
         </div>
       </div>
       <CommonSection className="px-4" title={"Tracks"}>

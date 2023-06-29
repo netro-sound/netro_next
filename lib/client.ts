@@ -8,7 +8,7 @@ export default function fetchGraphQL<TData, TVariables>(
   options?: RequestInit
 ): Promise<TData> {
   return fetch(
-    process.env.GRAPHQL_ENDPOINT || "http://localhost:8000/graphql",
+    process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || "http://localhost:8000/graphql",
     {
       method: "POST",
       headers: {
@@ -18,7 +18,7 @@ export default function fetchGraphQL<TData, TVariables>(
         query: printGraphQL(query),
         variables,
       }),
-      cache: "no-cache",
+      cache: "default",
       ...options,
     }
   )

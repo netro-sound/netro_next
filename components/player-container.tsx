@@ -177,7 +177,7 @@ export default function PlayerContainer() {
       <div
         className={cn(
           !currentTrack && "hidden",
-          "fixed bottom-0 right-0 z-20 w-full bg-background px-2 pb-1 lg:w-3/4"
+          "fixed bottom-0 right-0 z-20 w-full bg-background px-2 pb-1"
         )}
       >
         <Slider
@@ -193,7 +193,7 @@ export default function PlayerContainer() {
           className="mb-1"
         />
         <Collapsible>
-          <div className="m-0 flex h-16 w-full p-0 px-2 shadow-lg lg:h-20">
+          <div className="m-0 flex h-16 w-full p-0 px-2 shadow">
             <div className="flex flex-1 items-center space-x-4">
               <div className="h-14 w-14 overflow-hidden rounded-md">
                 <ThumbnailImage

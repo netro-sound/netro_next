@@ -14,13 +14,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import CanvasAudioVisualizer from "@/components/audio-visualizer/canvasAudioVisualizer"
 
 interface SidebarProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -78,8 +72,8 @@ export default function Sidebar(props: SidebarProps) {
   ]
 
   return (
-    <div className={cn("pb-12", props.className)}>
-      <div className="space-y-4 py-4">
+    <div className={cn("h-full pb-12", props.className)}>
+      <div className="h-max space-y-4 py-4">
         {links.map(({ category, items }) => (
           <div key={category} className="px-4 py-2">
             <h2 className="mb-2 px-2 text-lg font-semibold tracking-tight">
@@ -102,6 +96,7 @@ export default function Sidebar(props: SidebarProps) {
           </div>
         ))}
       </div>
+
       {/*<div className="space-y-4 p-4">*/}
       {/*  <Select>*/}
       {/*    <SelectTrigger className="w-full">*/}
@@ -116,6 +111,7 @@ export default function Sidebar(props: SidebarProps) {
       {/*    </SelectContent>*/}
       {/*  </Select>*/}
       {/*</div>*/}
+      {}
     </div>
   )
 }

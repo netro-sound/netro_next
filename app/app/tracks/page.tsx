@@ -7,8 +7,7 @@ import { Separator } from "@/components/ui/separator"
 import GridTracks from "@/components/tracks/grid-tracks"
 
 export const metadata: Metadata = {
-  title: "Music App",
-  description: "Example app app using the components.",
+  title: "Tracks",
 }
 
 const GET_TRACKS = gql`

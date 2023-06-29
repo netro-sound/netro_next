@@ -25,10 +25,7 @@ export default function Layout({ children }: RootLayoutProps) {
             <div>
               <Sidebar className="top-0 lg:sticky" />
             </div>
-            <div className="mb-20 lg:col-span-3 lg:border-x">
-              {children}
-              <PlayerContainer />
-            </div>
+            <div className="mb-20 lg:col-span-3 lg:border-x">{children}</div>
           </div>
         </div>
       </div>

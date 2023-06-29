@@ -7,7 +7,7 @@ import GridAlbums from "@/components/albums/grid-albums"
 import CommonSection from "@/components/common-section"
 
 export const metadata: Metadata = {
-  title: "Music App",
+  title: "Albums",
   description: "Example app app using the components.",
 }
 

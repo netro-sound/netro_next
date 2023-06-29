@@ -7,7 +7,7 @@ import CommonSection from "@/components/common-section"
 import GridPlaylists from "@/components/playlists/grid-playlists"
 
 export const metadata: Metadata = {
-  title: "Music App",
+  title: "Playlists",
   description: "Example app app using the components.",
 }
 

@@ -13,8 +13,8 @@ import CardAlbum from "@/components/albums/card-album"
 import CardTrack from "@/components/tracks/card-track"
 
 export const metadata: Metadata = {
-  title: "Music App",
-  description: "Example app app using the components.",
+  title: "App",
+  description: "Listen to tracks",
 }
 
 const GET_ALBUMS = gql`

@@ -2,6 +2,7 @@ import { TrackType } from "@/__generated__/graphql"
 import { gql } from "graphql-tag"
 import { create } from "zustand"
 
+import { AudioAnalyzer } from "@/lib/audio-analyzer"
 import fetchGraphQL from "@/lib/client"
 import { apiURL } from "@/lib/utils"
 
@@ -74,10 +75,12 @@ interface PlayerState {
   pause: () => void
   setAudioTag: (audioTag: HTMLAudioElement) => void
   trackData: TrackData
+  analyzer: AudioAnalyzer | null
 }
 
 const usePlayerStore = create<PlayerState>()((set, get) => ({
   audioTag: null,
+  analyzer: null,
   setAudioTag: (audioTag: HTMLAudioElement) => set({ audioTag }),
   currentTrack: null,
   queue: [],
@@ -171,6 +174,10 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
     audioTag?.setAttribute("src", apiURL(trackById.streamUrl))
     if (play) {
       audioTag?.addEventListener("loadeddata", audioTag?.play)
+
+      set({
+        analyzer: get().analyzer ?? new AudioAnalyzer(get().audioTag!),
+      })
     }
   },
   nextTrack: (play = false) => {

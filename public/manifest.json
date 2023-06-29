@@ -1,0 +1,28 @@
+{
+  "theme_color": "#E0A82E",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "name": "Netro Sound",
+  "description": "A plataforma de m\u00fasica que usa intelig\u00eancia artificial para identificar m\u00fasicas.",
+  "short_name": "Netro Sound",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable_icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
