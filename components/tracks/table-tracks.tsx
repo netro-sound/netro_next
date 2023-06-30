@@ -29,9 +29,9 @@ export default function TableTracks({
   queueAll,
   ...props
 }: TableTracksProps) {
-  const queue = usePlayerStore((state) => state.queue)
-  const setQueue = usePlayerStore((state) => state.setQueue)
-  const changeTrack = usePlayerStore((state) => state.changeTrack)
+  const { queue, setQueue, changeTrack, currentTrack } = usePlayerStore(
+    (state) => state
+  )
   const [search, setSearch] = useState("")
 
   async function handlePlayTrack(track: TrackType) {
@@ -63,6 +63,7 @@ export default function TableTracks({
         <TableBody>
           {tracks.map((track, index) => (
             <TableRow
+              className={cn(track.id == currentTrack?.id && "bg-gray-200")}
               key={track.id}
               onDoubleClick={() => handlePlayTrack(track)}
             >
