@@ -31,16 +31,16 @@ export default function Sidebar(props: SidebarProps) {
           icon: PlayCircle,
           href: "/app",
         },
-        {
-          label: "Browse",
-          icon: LayoutGrid,
-          href: "/browse",
-        },
-        {
-          label: "Radio",
-          icon: Radio,
-          href: "/radio",
-        },
+        // {
+        //   label: "Browse",
+        //   icon: LayoutGrid,
+        //   href: "/browse",
+        // },
+        // {
+        //   label: "Radio",
+        //   icon: Radio,
+        //   href: "/radio",
+        // },
       ],
     },
     {

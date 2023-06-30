@@ -17,11 +17,7 @@ export default function IndexPage() {
       </div>
       <Separator className="my-4" />
       <div className="flex gap-4">
-        <CanvasAudioVisualizer
-          style={{
-            height: "480px",
-          }}
-        />
+        <CanvasAudioVisualizer className="aspect-square w-full lg:aspect-video lg:h-[480px]" />
       </div>
       {/*<div className="flex gap-4">*/}
       {/*  <Link*/}

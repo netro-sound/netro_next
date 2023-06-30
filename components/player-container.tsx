@@ -12,6 +12,7 @@ import {
 } from "react-icons/ri"
 
 import { cn, formatTime } from "@/lib/utils"
+import { renderArtistLink } from "@/lib/utils-tsx"
 import { Button } from "@/components/ui/button"
 import {
   Collapsible,
@@ -195,7 +196,10 @@ export default function PlayerContainer() {
         <Collapsible>
           <div className="m-0 flex h-16 w-full p-0 px-2 shadow">
             <div className="flex flex-1 items-center space-x-4">
-              <div className="h-14 w-14 overflow-hidden rounded-md">
+              <Link
+                href={`/app/tracks/${currentTrack?.id}`}
+                className="h-14 w-14 overflow-hidden rounded-md"
+              >
                 <ThumbnailImage
                   thumbnails={currentTrack?.albums?.[0].thumbnails}
                   alt={currentTrack?.name ?? "Album Artwork"}
@@ -203,7 +207,7 @@ export default function PlayerContainer() {
                   height={56}
                   className={"aspect-square h-auto w-auto object-cover"}
                 />
-              </div>
+              </Link>
               <div className="hidden overflow-x-clip md:block">
                 <Link
                   href={`/app/tracks/${currentTrack?.id}`}
@@ -212,9 +216,10 @@ export default function PlayerContainer() {
                   {currentTrack?.name}
                 </Link>
                 <span className="block w-48 truncate text-sm font-light 2xl:w-96">
-                  {currentTrack?.artists
-                    ?.map((artist) => artist.name)
-                    .join(", ")}
+                  {renderArtistLink(
+                    currentTrack?.artists ?? [],
+                    "/app/artists"
+                  )}
                 </span>
               </div>
             </div>

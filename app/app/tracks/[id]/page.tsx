@@ -12,6 +12,7 @@ import PlayTracksButton from "@/components/play-tracks-button"
 import ThumbnailImage, {
   getClosestThumbnail,
 } from "@/components/thumbnail-image"
+import ConditionalRender from "@/components/tracks/conditional-render"
 
 export async function generateMetadata({ params }: PageParams) {
   const { trackById: track } = await fetchGraphQL<
@@ -98,21 +99,18 @@ export default async function Page({ params }: PageParams) {
         }}
         className="relative z-0"
       >
-        {/*<div className="absolute left-0 top-0 z-10 h-full w-full">*/}
-        {/*  <CanvasAudioVisualizer*/}
-        {/*    colors={[color.hex, "#fff"]}*/}
-        {/*    className="h-full w-full"*/}
-        {/*  />*/}
-        {/*</div>*/}
-
-        <div className="z-20 flex h-[30rem] w-full flex-col gap-4 px-4 py-12 md:h-60 md:flex-row md:items-center">
-          <ThumbnailImage
-            alt={track.name || ""}
-            thumbnails={track.albums?.[0]?.thumbnails || []}
-            width={192}
-            height={192}
-            className="aspect-square w-full rounded-md object-cover md:w-48"
-          />
+        <div className="flex w-full flex-col gap-4 px-4 py-12 md:h-60 md:flex-row md:items-center">
+          <div className="aspect-square w-full rounded-md object-cover md:w-48">
+            <ConditionalRender trackId={track.id} inverted={true}>
+              <ThumbnailImage
+                alt={track.name || ""}
+                thumbnails={track.albums?.[0]?.thumbnails || []}
+                width={192}
+                height={192}
+                className="aspect-square w-full rounded-md object-cover md:w-48"
+              />
+            </ConditionalRender>
+          </div>
           <div className="flex w-full flex-row-reverse items-center justify-end gap-4 md:block md:space-y-4">
             <div>
               <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
@@ -127,6 +125,11 @@ export default async function Page({ params }: PageParams) {
               className="aspect-square h-14 rounded-full p-4 text-2xl"
             />
           </div>
+        </div>
+        <div className="absolute left-0 top-0 -z-10 h-full w-full">
+          <ConditionalRender trackId={track.id}>
+            <CanvasAudioVisualizer />
+          </ConditionalRender>
         </div>
       </div>
       <CommonSection title="Lyrics" className="px-4">

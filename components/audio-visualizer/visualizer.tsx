@@ -8,7 +8,13 @@ import { AudioAnalyzer } from "@/lib/audio-analyzer"
 import { avg, max, modulate } from "@/lib/math"
 import Sphere from "@/components/audio-visualizer/sphere"
 
-export function Visualizer({ analyzer }: { analyzer: AudioAnalyzer | null }) {
+export function Visualizer({
+  analyzer,
+  colors,
+}: {
+  analyzer: AudioAnalyzer | null
+  colors: string[] | number[]
+}) {
   const sphereRef = useRef<ThreeElements["mesh"]>()
   const audioTag = usePlayerStore((state) => state.audioTag)
 
@@ -89,5 +95,5 @@ export function Visualizer({ analyzer }: { analyzer: AudioAnalyzer | null }) {
     render(fft)
   })
 
-  return <Sphere scale={1} size={[40, 4]} ref={sphereRef} />
+  return <Sphere colors={colors} scale={1} size={[40, 1]} ref={sphereRef} />
 }

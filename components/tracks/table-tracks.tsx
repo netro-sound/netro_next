@@ -7,6 +7,7 @@ import usePlayerStore from "@/stores/usePlayerStore"
 import { RiPlayFill, RiTimeFill } from "react-icons/ri"
 
 import { cn, formatTime } from "@/lib/utils"
+import { renderArtistLink } from "@/lib/utils-tsx"
 import {
   Table,
   TableBody,
@@ -43,21 +44,6 @@ export default function TableTracks({
     }
 
     changeTrack(track.id, true)
-  }
-
-  function renderArtistLink(objects: ArtistType[] | AlbumType[], href: string) {
-    // Separate each tag with a comma
-
-    return objects.map((object, index) => {
-      const tag = <Link href={`${href}/${object.id}`}>{object.name}</Link>
-
-      // Add comma if it's not the last object
-      if (index < objects.length - 1) {
-        return [tag, ", "]
-      }
-
-      return tag
-    })
   }
 
   return (
