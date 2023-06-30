@@ -100,14 +100,14 @@ export default async function Page({ params }: PageParams) {
         className="relative z-0"
       >
         <div className="flex w-full flex-col gap-4 px-4 py-12 md:h-60 md:flex-row md:items-center">
-          <div className="aspect-square w-full rounded-md object-cover md:w-48">
+          <div className="aspect-square w-full overflow-hidden rounded-md md:w-48">
             <ConditionalRender trackId={track.id} inverted={true}>
               <ThumbnailImage
                 alt={track.name || ""}
                 thumbnails={track.albums?.[0]?.thumbnails || []}
                 width={192}
                 height={192}
-                className="aspect-square w-full rounded-md object-cover md:w-48"
+                className="h-full w-full"
               />
             </ConditionalRender>
           </div>
