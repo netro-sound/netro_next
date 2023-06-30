@@ -13,15 +13,18 @@ export default function PlayTracksButton({
   tracks,
   ...props
 }: PlayButtonProps) {
-  const setQueue = usePlayerStore((state) => state.setQueue)
+  const { setQueue, changeTrack, queue } = usePlayerStore((state) => state)
+
+  async function handlePlayTrack() {
+    const isQueue = queue.every((track) => tracks.includes(track.id))
+
+    if (isQueue) await setQueue(tracks)
+
+    changeTrack(tracks[0], true)
+  }
 
   return (
-    <Button
-      {...props}
-      onClick={() => {
-        setQueue(tracks)
-      }}
-    >
+    <Button {...props} onClick={handlePlayTrack}>
       <RiPlayFill />
     </Button>
   )
