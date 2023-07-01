@@ -108,7 +108,7 @@ export default async function MusicPage() {
             </ScrollArea>
           </div>
         </CommonSection>
-        <CommonSection title="Playlists">
+        <CommonSection title="Artists">
           <div className="relative">
             <ScrollArea>
               <div className="flex space-x-4 pb-4">
