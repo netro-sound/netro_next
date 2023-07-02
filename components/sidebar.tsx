@@ -2,19 +2,11 @@
 
 import { HTMLAttributes } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import {
-  LayoutGrid,
-  Library,
-  ListMusic,
-  Mic2,
-  Music2,
-  PlayCircle,
-  Radio,
-} from "lucide-react"
+import { Library, ListMusic, Mic2, Music2, PlayCircle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import CanvasAudioVisualizer from "@/components/audio-visualizer/canvasAudioVisualizer"
+import AudioRecorder from "@/components/audio-recorder"
 
 interface SidebarProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -96,7 +88,6 @@ export default function Sidebar(props: SidebarProps) {
           </div>
         ))}
       </div>
-
       {/*<div className="space-y-4 p-4">*/}
       {/*  <Select>*/}
       {/*    <SelectTrigger className="w-full">*/}

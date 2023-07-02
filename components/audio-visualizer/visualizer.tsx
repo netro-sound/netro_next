@@ -48,9 +48,9 @@ export function Visualizer({
       vertex.normalize()
 
       const noiseValue = noise3D(
-        vertex.x + time * rf * 7,
-        vertex.y + time * rf * 8,
-        vertex.z + time * rf * 9
+        vertex.x + time * rf,
+        vertex.y + time * rf,
+        vertex.z + time * rf
       )
       const distance = offset + bassFr + noiseValue * amp * treFr
 

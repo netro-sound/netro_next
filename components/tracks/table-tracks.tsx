@@ -2,7 +2,7 @@
 
 import { HTMLAttributes, useState } from "react"
 import Link from "next/link"
-import { AlbumType, ArtistType, TrackType } from "@/__generated__/graphql"
+import { TrackType } from "@/__generated__/graphql"
 import usePlayerStore from "@/stores/usePlayerStore"
 import { RiPlayFill, RiTimeFill } from "react-icons/ri"
 
@@ -63,7 +63,7 @@ export default function TableTracks({
         <TableBody>
           {tracks.map((track, index) => (
             <TableRow
-              className={cn(track.id == currentTrack?.id && "bg-gray-200")}
+              className={cn(track.id == currentTrack?.id && "bg-secondary")}
               key={track.id}
               onDoubleClick={() => handlePlayTrack(track)}
             >
@@ -75,7 +75,9 @@ export default function TableTracks({
               </TableCell>
               <TableCell className="font-medium">
                 <span className="block w-48 truncate 2xl:w-96">
-                  {track.name ?? "Unknown"}
+                  <Link href={`/app/tracks/${track.id}`}>
+                    {track.name ?? "Unknown"}
+                  </Link>
                 </span>
                 <span className="block w-48 truncate text-xs 2xl:w-96">
                   {renderArtistLink(track.artists ?? [], "/app/artists")}
