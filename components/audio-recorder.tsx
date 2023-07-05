@@ -177,7 +177,6 @@ export default function AudioRecorder(props: Props) {
         open={openDialog}
         onOpenChange={(open) => {
           setOpenDialog(open)
-          pause()
           !open && closeDialog()
         }}
       >
