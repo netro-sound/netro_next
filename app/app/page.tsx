@@ -136,7 +136,7 @@ export default async function MusicPage() {
                 {albums.map((album) => (
                   <CardAlbum
                     key={album.id}
-                    album={album}
+                    query={album}
                     className="w-[150px]"
                     aspectRatio="square"
                     width={150}

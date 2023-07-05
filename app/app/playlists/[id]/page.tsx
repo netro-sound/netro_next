@@ -7,7 +7,6 @@ import { gql } from "graphql-tag"
 import { PageParams } from "@/types/PageParams"
 import fetchGraphQL from "@/lib/client"
 import { thumbnailURL } from "@/lib/utils"
-import CanvasAudioVisualizer from "@/components/audio-visualizer/canvasAudioVisualizer"
 import CommonSection from "@/components/common-section"
 import PlayTracksButton from "@/components/play-tracks-button"
 import ThumbnailImage, {
@@ -21,7 +20,7 @@ export async function generateMetadata({ params }: PageParams) {
     unknown
   >(
     gql`
-      query PlaylistByID($id: String!) {
+      query PlaylistMetadata($id: String!) {
         playlistById(id: $id) {
           name
         }
@@ -48,7 +47,7 @@ export default async function Page({ params }: PageParams) {
     unknown
   >(
     gql`
-      query PlaylistByID($id: String!) {
+      query PlaylistPage($id: String!) {
         playlistById(id: $id) {
           id
           name
@@ -71,19 +70,21 @@ export default async function Page({ params }: PageParams) {
 
   const playlistTracks = playlist.tracks?.map((track) => track.id) || []
 
-  do {
-    const { tracks } = await fetchGraphQL<{ tracks: TrackType[] }, unknown>(
-      FETCH_LIST_TRACKS,
-      {
-        ids: playlistTracks,
-        page: page++,
-        limit,
-      }
-    )
+  if (playlistTracks.length > 0) {
+    do {
+      const { tracks } = await fetchGraphQL<{ tracks: TrackType[] }, unknown>(
+        FETCH_LIST_TRACKS,
+        {
+          ids: playlistTracks,
+          page: page++,
+          limit,
+        }
+      )
 
-    pTracks.push(...tracks)
-    flagTracks = tracks.length < limit
-  } while (!flagTracks)
+      pTracks.push(...tracks)
+      flagTracks = tracks.length < limit
+    } while (!flagTracks)
+  }
 
   const thumbnail = getClosestThumbnail(playlist.thumbnails || [], 192, 192)
   const thumbnailUrl = thumbnailURL(thumbnail.id)
@@ -109,9 +110,6 @@ export default async function Page({ params }: PageParams) {
             <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
               {playlist.name}
             </h1>
-            {/*<h2 className="text-lg text-muted-foreground">*/}
-            {/*  {track.artists?.map((artist) => artist.name).join(", ")}*/}
-            {/*</h2>*/}
           </div>
           <PlayTracksButton
             className="aspect-square h-14 rounded-full p-4 text-2xl"

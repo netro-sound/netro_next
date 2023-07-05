@@ -2,10 +2,13 @@
 
 import { HTMLAttributes, useEffect, useRef, useState } from "react"
 import { DialogBody } from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
+import { useRouter } from "next/navigation"
+import { ExperimentType } from "@/__generated__/graphql"
 import usePlayerStore from "@/stores/usePlayerStore"
 import { DialogClose } from "@radix-ui/react-dialog"
 import {
   RiCloseFill,
+  RiLoader2Fill,
   RiMic2Fill,
   RiMic2Line,
   RiPauseFill,
@@ -13,6 +16,8 @@ import {
 } from "react-icons/ri"
 import { useReactMediaRecorder } from "react-media-recorder"
 
+import { fetchAPI } from "@/lib/client"
+import { objectToFormData } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -24,10 +29,21 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  experiments: ExperimentType[]
+}
+
+const MIN_TIME = 5
+const MAX_TIME = 30
 
 export default function AudioRecorder(props: Props) {
   const { pause } = usePlayerStore((state) => state)
+  const [openDialog, setOpenDialog] = useState(false)
+  const router = useRouter()
+
+  const [statusSubmit, setStatusSubmit] = useState<
+    "finished" | "submitting" | "error" | "idle"
+  >("idle")
 
   const { status, startRecording, stopRecording, mediaBlobUrl, clearBlobUrl } =
     useReactMediaRecorder({
@@ -57,7 +73,7 @@ export default function AudioRecorder(props: Props) {
       if (audioRef.current?.paused) {
         audioRef.current.play()
       } else {
-        audioRef.current.play()
+        audioRef.current?.pause()
       }
     }
   }
@@ -83,28 +99,63 @@ export default function AudioRecorder(props: Props) {
 
   const onInputChange = () => {
     if (inputRef.current?.files) {
-      console.log(inputRef.current.files[0])
-
       const file = inputRef.current.files[0]
       const blob = URL.createObjectURL(file)
       setLocalMediaURL(blob)
       audioRef.current = new Audio(blob)
-      audioRef.current?.play()
-      setPlayStatus("playing")
+      setPlayStatus("paused")
     }
   }
 
   function closeDialog() {
+    setOpenDialog(false)
     stopRecording()
     handleDelete()
+  }
+
+  async function handleInference() {
+    if (!localMediaURL) return
+    if (!audioRef.current) return
+    if (!props.experiments) return
+
+    const experiment = props.experiments[0].id
+    const model = props.experiments[0].models.find((m) => m.type == "MLP")?.id
+
+    if (!experiment || !model) alert("No experiment or model found")
+
+    const duration = audioRef.current?.duration
+
+    if (duration < MIN_TIME) return alert("Recording too short")
+    if (duration > MAX_TIME) return alert("Recording too long")
+
+    setStatusSubmit("submitting")
+
+    const recordBlob = await fetch(localMediaURL).then((r) => r.blob())
+
+    const formData = objectToFormData({
+      experiment,
+      model: "mlp",
+      query_track: new File([recordBlob], "query.wav"),
+    })
+
+    const query = await fetchAPI("/queries/", {
+      method: "POST",
+      body: formData,
+    })
+
+    setStatusSubmit("finished")
+
+    if (query) {
+      router.push(`/app/queries/${query.id}`)
+      closeDialog()
+    }
   }
 
   useEffect(() => {
     if (mediaBlobUrl) {
       setLocalMediaURL(mediaBlobUrl)
       audioRef.current = new Audio(mediaBlobUrl)
-      audioRef.current?.play()
-      setPlayStatus("playing")
+      setPlayStatus("paused")
     }
   }, [mediaBlobUrl])
 
@@ -123,7 +174,9 @@ export default function AudioRecorder(props: Props) {
   return (
     <div {...props}>
       <Dialog
+        open={openDialog}
         onOpenChange={(open) => {
+          setOpenDialog(open)
           pause()
           !open && closeDialog()
         }}
@@ -180,7 +233,15 @@ export default function AudioRecorder(props: Props) {
             <Button variant="outline" onClick={uploadAudio}>
               Upload
             </Button>
-            <Button disabled={!localMediaURL}>Recognize</Button>
+            <Button
+              disabled={!localMediaURL || statusSubmit == "submitting"}
+              onClick={handleInference}
+            >
+              {statusSubmit == "submitting" && (
+                <RiLoader2Fill className="mr-2 animate-spin" />
+              )}
+              Recognize
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

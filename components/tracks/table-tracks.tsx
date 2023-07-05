@@ -1,6 +1,6 @@
 "use client"
 
-import { HTMLAttributes, useState } from "react"
+import { HTMLAttributes } from "react"
 import Link from "next/link"
 import { TrackType } from "@/__generated__/graphql"
 import usePlayerStore from "@/stores/usePlayerStore"
@@ -21,9 +21,11 @@ import {
 interface TableTracksProps extends HTMLAttributes<HTMLDivElement> {
   tracks: TrackType[]
   queueAll?: boolean
+  queryResult?: boolean
 }
 
 export default function TableTracks({
+  queryResult = false,
   tracks,
   className,
   queueAll,
@@ -32,7 +34,6 @@ export default function TableTracks({
   const { queue, setQueue, changeTrack, currentTrack } = usePlayerStore(
     (state) => state
   )
-  const [search, setSearch] = useState("")
 
   async function handlePlayTrack(track: TrackType) {
     const tracksIds = tracks.map((track) => track.id)
@@ -54,7 +55,17 @@ export default function TableTracks({
           <TableRow>
             <TableHead className="text-center">#</TableHead>
             <TableHead>Title</TableHead>
-            <TableHead className="hidden sm:table-cell">Album</TableHead>
+            {!queryResult ? (
+              <TableHead className="hidden sm:table-cell">Album</TableHead>
+            ) : (
+              <>
+                <TableHead className="hidden sm:table-cell">Support</TableHead>
+                <TableHead className="hidden sm:table-cell">
+                  Accuracy (%)
+                </TableHead>
+              </>
+            )}
+
             <TableHead className="text-center text-xl">
               <RiTimeFill />
             </TableHead>
@@ -83,9 +94,21 @@ export default function TableTracks({
                   {renderArtistLink(track.artists ?? [], "/app/artists")}
                 </span>
               </TableCell>
-              <TableCell className="hidden w-48 truncate text-xs sm:table-cell 2xl:w-96">
-                {renderArtistLink(track.albums ?? [], "/app/albums")}
-              </TableCell>
+              {!queryResult ? (
+                <TableCell className="hidden w-48 truncate text-xs sm:table-cell 2xl:w-96">
+                  {renderArtistLink(track.albums ?? [], "/app/albums")}
+                </TableCell>
+              ) : (
+                <>
+                  <TableCell className="hidden w-48 truncate text-xs sm:table-cell 2xl:w-96">
+                    {track.support ?? "-"}
+                  </TableCell>
+                  <TableCell className="hidden w-48 truncate text-xs sm:table-cell 2xl:w-96">
+                    {((track.accuracy ?? 0) * 100).toFixed(2) ?? "-"}
+                  </TableCell>
+                </>
+              )}
+
               {/*<TableCell>{invoice.paymentStatus}</TableCell>*/}
               {/*<TableCell>{invoice.paymentMethod}</TableCell>*/}
               <TableCell>

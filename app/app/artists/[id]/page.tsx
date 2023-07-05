@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageParams) {
     unknown
   >(
     gql`
-      query ArtistByID($id: String!) {
+      query ArtistPageMetadata($id: String!) {
         artistById(id: $id) {
           name
         }
@@ -48,7 +48,7 @@ export default async function Page({ params }: PageParams) {
     unknown
   >(
     gql`
-      query ArtistByID($id: String!) {
+      query ArtistPage($id: String!) {
         artistById(id: $id) {
           id
           name
@@ -70,20 +70,21 @@ export default async function Page({ params }: PageParams) {
   )
 
   const tracksIds = artist.tracks?.map((track) => track.id) || []
+  if (tracksIds.length > 0) {
+    do {
+      const { tracks } = await fetchGraphQL<{ tracks: TrackType[] }, unknown>(
+        FETCH_LIST_TRACKS,
+        {
+          ids: tracksIds,
+          page: page++,
+          limit,
+        }
+      )
 
-  do {
-    const { tracks } = await fetchGraphQL<{ tracks: TrackType[] }, unknown>(
-      FETCH_LIST_TRACKS,
-      {
-        ids: tracksIds,
-        page: page++,
-        limit,
-      }
-    )
-
-    pTracks.push(...tracks)
-    flagTracks = tracks.length < limit
-  } while (!flagTracks)
+      pTracks.push(...tracks)
+      flagTracks = tracks.length < limit
+    } while (!flagTracks)
+  }
 
   const thumbnail = getClosestThumbnail(artist.thumbnails || [], 192, 192)
   const thumbnailUrl = thumbnailURL(thumbnail.id)

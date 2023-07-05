@@ -28,9 +28,65 @@ type ArtistType {
 
 type DatasetType {
   description: String
+  experiments: [ExperimentType!]!
   id: ID!
   name: String
   tracks: [TrackType!]!
+}
+
+type ExperimentQueryType {
+  executionJson: JSONString
+  experiment: ExperimentType!
+  id: UUID!
+  model: ModelType!
+  queryTrack: String
+  resultJson: [JSONString!]
+  streamUrl: String
+}
+
+type ExperimentType {
+  dataset: DatasetType!
+  description: String
+  encoderFile: String
+  id: UUID!
+  models: [ModelType!]!
+  name: String
+  preprocessJson: JSONString
+  queries: [ExperimentQueryType!]!
+  representationFile: String
+  representationJson: JSONString
+  scalerFile: String
+}
+
+type MetricType {
+  accuracy: Float
+  classesReport: JSONString
+  experimentsTest: [ModelType!]!
+  experimentsTrain: [ModelType!]!
+  experimentsValidation: [ModelType!]!
+  f1Score: Float
+  id: ID!
+  loss: Float
+  precision: Float
+  recall: Float
+  support: Float
+}
+
+type ModelType {
+  dependsOn: ModelType
+  experiments: [ExperimentType!]!
+  hyperParameters: JSONString
+  id: ID!
+  isAutoencoder: Boolean!
+  isNeuralNetwork: Boolean!
+  modelFile: String
+  modelSet: [ModelType!]!
+  queries: [ExperimentQueryType!]!
+  scalerFile: String
+  testMetrics: MetricType!
+  trainMetrics: MetricType!
+  type: MlModelTypeChoices
+  validationMetrics: MetricType!
 }
 
 type PlaylistType {
@@ -51,6 +107,14 @@ type Query {
   artists(limit: Int = 20, page: Int = 1): [ArtistType!]
   datasetById(id: String!): DatasetType
   datasets(limit: Int = 20, page: Int = 1): [DatasetType!]
+  experimentById(id: Int): ExperimentType
+  experimentQueries(limit: Int = 20, page: Int = 1): [ExperimentQueryType!]
+  experimentQueryById(id: UUID): ExperimentQueryType
+  experiments: [ExperimentType!]
+  metricById(id: Int): MetricType
+  metrics: [MetricType!]
+  modelById(id: Int): ModelType
+  models: [ModelType!]
   playlistById(id: String!): PlaylistType
   playlists(limit: Int = 20, page: Int = 1): [PlaylistType!]
   trackById(id: String!): TrackType
@@ -107,3 +171,35 @@ enum ApiTrackStatusChoices {
   "Pending"
   PENDING
 }
+
+"An enumeration."
+enum MlModelTypeChoices {
+  "Aebilstm"
+  AE_BILSTM
+  "Aecnn"
+  AE_CNN
+  "Aelstm"
+  AE_LSTM
+  "Aemlp"
+  AE_MLP
+  "Knn"
+  KNN
+  "Mlp"
+  MLP
+}
+
+"""
+
+Allows use of a JSON String for input / output from the GraphQL schema.
+
+Use of this type is *not recommended* as you lose the benefits of having a defined, static
+schema (one of the key benefits of GraphQL).
+"""
+scalar JSONString
+
+"""
+
+Leverages the internal Python implementation of UUID (uuid.UUID) to provide native UUID objects
+in fields, resolvers and input.
+"""
+scalar UUID

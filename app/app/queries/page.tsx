@@ -1,52 +1,44 @@
 import { Metadata } from "next"
-import { TrackType } from "@/__generated__/graphql"
+import { ExperimentQueryType, TrackType } from "@/__generated__/graphql"
 import { gql } from "graphql-tag"
 
 import fetchGraphQL from "@/lib/client"
 import { Separator } from "@/components/ui/separator"
+import GridQueries from "@/components/queries/grid-queries"
 import GridTracks from "@/components/tracks/grid-tracks"
 
 export const metadata: Metadata = {
   title: "Tracks",
 }
 
-const GET_TRACKS = gql`
-  query ListTracksHome($page: Int = 1, $limit: Int = 60) {
-    tracks(limit: $limit, page: $page) {
+const GET_QUERIES = gql`
+  query ListExperimentQueries($page: Int = 1, $limit: Int = 60) {
+    experimentQueries(limit: $limit, page: $page) {
       id
-      name
-      artists {
+      model {
+        type
         id
-        name
-      }
-      albums {
-        id
-        name
-        thumbnails {
-          id
-          height
-          width
-        }
       }
     }
   }
 `
 
 export default async function Page() {
-  const { tracks } = await fetchGraphQL<{ tracks: TrackType[] }, unknown>(
-    GET_TRACKS
-  )
+  const { experimentQueries } = await fetchGraphQL<
+    { experimentQueries: ExperimentQueryType[] },
+    unknown
+  >(GET_QUERIES)
 
   return (
     <>
       <div className="h-full px-4 py-6 lg:px-8">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-2xl font-semibold tracking-tight">Tracks</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">Queries</h2>
           </div>
         </div>
         <Separator className="my-4" />
-        <GridTracks tracks={tracks} gql={GET_TRACKS} />
+        <GridQueries queries={experimentQueries} gql={GET_QUERIES} />
       </div>
     </>
   )

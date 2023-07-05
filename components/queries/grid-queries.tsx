@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { AlbumType } from "@/__generated__/graphql"
+import { AlbumType, ExperimentQueryType } from "@/__generated__/graphql"
 import { DocumentNode } from "graphql/language"
 import { Loader } from "lucide-react"
 
@@ -10,21 +10,23 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import CardAlbum from "@/components/albums/card-album"
+import CardQuery from "@/components/queries/card-query"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-  albums: AlbumType[]
+  queries: ExperimentQueryType[]
   gql: DocumentNode
   limit?: number
 }
 
-export default function GridAlbums({
-  albums,
+export default function GridQueries({
+  queries,
   gql,
   limit = 60,
   className,
 }: Props) {
-  const [currentItems, setCurrentItems] = useState<AlbumType[]>(albums)
-  const [hasMore, setHasMore] = useState(albums.length >= limit)
+  const [currentItems, setCurrentItems] =
+    useState<ExperimentQueryType[]>(queries)
+  const [hasMore, setHasMore] = useState(queries.length >= limit)
   const [isLoading, setIsLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const { toast } = useToast()
@@ -33,17 +35,17 @@ export default function GridAlbums({
     if (isLoading) return
 
     try {
-      const { albums } = await fetchGraphQL<{ albums: AlbumType[] }, unknown>(
-        gql,
-        {
-          page: currentPage + 1,
-        }
-      )
+      const { experimentQueries } = await fetchGraphQL<
+        { experimentQueries: ExperimentQueryType[] },
+        unknown
+      >(gql, {
+        page: currentPage + 1,
+      })
 
-      if (albums.length < limit) setHasMore(false)
+      if (experimentQueries.length < limit) setHasMore(false)
       setIsLoading(false)
       setCurrentPage((page) => page + 1)
-      setCurrentItems((prev) => [...prev, ...albums])
+      setCurrentItems((prev) => [...prev, ...experimentQueries])
     } catch (e) {
       toast({
         title: "Error",
@@ -55,10 +57,10 @@ export default function GridAlbums({
   return (
     <div className={className}>
       <div className="grid grid-cols-2 gap-4 pb-4 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8">
-        {currentItems.map((album) => (
-          <CardAlbum
-            key={album.id}
-            query={album}
+        {currentItems.map((query) => (
+          <CardQuery
+            key={query.id}
+            query={query}
             className=""
             aspectRatio="square"
             width={160}

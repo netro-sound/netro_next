@@ -14,27 +14,27 @@ import ThumbnailImage, {
 } from "@/components/thumbnail-image"
 import ConditionalRender from "@/components/tracks/conditional-render"
 
-export async function generateMetadata({ params }: PageParams) {
-  const { trackById: track } = await fetchGraphQL<
-    { trackById: TrackType },
-    unknown
-  >(
-    gql`
-      query TrackById($id: String!) {
-        trackById(id: $id) {
-          name
-        }
-      }
-    `,
-    {
-      id: params.id,
-    }
-  )
-
-  return {
-    title: track.name || "",
-  }
-}
+// export async function generateMetadata({ params }: PageParams) {
+//   const { trackById: track } = await fetchGraphQL<
+//     { trackById: TrackType },
+//     unknown
+//   >(
+//     gql`
+//       query TrackMetadata($id: String!) {
+//         trackById(id: $id) {
+//           name
+//         }
+//       }
+//     `,
+//     {
+//       id: params.id,
+//     }
+//   )
+//
+//   return {
+//     title: track.name || "",
+//   }
+// }
 
 export default async function Page({ params }: PageParams) {
   const { trackById: track } = await fetchGraphQL<
@@ -42,7 +42,7 @@ export default async function Page({ params }: PageParams) {
     unknown
   >(
     gql`
-      query TrackById($id: String!) {
+      query TrackPage($id: String!) {
         trackById(id: $id) {
           id
           name

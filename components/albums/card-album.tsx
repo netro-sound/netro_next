@@ -16,14 +16,14 @@ import {
 import ThumbnailImage from "@/components/thumbnail-image"
 
 interface AlbumArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
-  album: AlbumType
+  query: AlbumType
   aspectRatio?: "portrait" | "square"
   width?: number
   height?: number
 }
 
 export default function CardAlbum({
-  album,
+  query,
   aspectRatio = "portrait",
   width,
   height,
@@ -35,12 +35,12 @@ export default function CardAlbum({
       <ContextMenu>
         <ContextMenuTrigger>
           <Link
-            href={`/app/albums/${album.id}`}
+            href={`/app/albums/${query.id}`}
             className="block overflow-hidden rounded-md "
           >
             <ThumbnailImage
-              thumbnails={album.thumbnails}
-              alt={album.name ?? "Album Artwork"}
+              thumbnails={query.thumbnails}
+              alt={query.name ?? "Album Artwork"}
               width={width ?? 640}
               height={height ?? 640}
               className={cn(
@@ -78,17 +78,17 @@ export default function CardAlbum({
       </ContextMenu>
       <div className="space-y-1 text-sm">
         <Link
-          href={`/app/albums/${album.id}`}
-          title={album.name ?? "Album Name"}
+          href={`/app/albums/${query.id}`}
+          title={query.name ?? "Album Name"}
           className="block w-full truncate font-medium leading-none"
         >
-          {album.name}
+          {query.name}
         </Link>
         <p
-          title={album.artists?.map((i) => i.name).join(", ")}
+          title={query.artists?.map((i) => i.name).join(", ")}
           className="line-clamp-2 text-xs text-muted-foreground"
         >
-          {album.artists?.map((i) => i.name).join(", ")}
+          {query.artists?.map((i) => i.name).join(", ")}
         </p>
       </div>
     </div>

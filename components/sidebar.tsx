@@ -2,11 +2,17 @@
 
 import { HTMLAttributes } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { Library, ListMusic, Mic2, Music2, PlayCircle } from "lucide-react"
+import {
+  Library,
+  ListMusic,
+  Mic2,
+  Music2,
+  PlayCircle,
+  Sparkles,
+} from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import AudioRecorder from "@/components/audio-recorder"
 
 interface SidebarProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -58,6 +64,11 @@ export default function Sidebar(props: SidebarProps) {
           label: "Artists",
           icon: Mic2,
           href: "/app/artists",
+        },
+        {
+          label: "Queries",
+          icon: Sparkles,
+          href: "/app/queries",
         },
       ],
     },
