@@ -2,6 +2,7 @@
 
 import React from "react"
 
+import { cn } from "@/lib/utils"
 import {
   Tooltip,
   TooltipContent,
@@ -28,26 +29,36 @@ export default function TimeQuery({
   loadTime,
 }: Props) {
   return (
-    <div className="flex w-full">
-      <TooltipProvider>
+    <>
+      <div className="flex w-full rounded px-4">
+        <TooltipProvider>
+          {[loadTime, preprocessTime, predictTime].map((item) => (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  style={{
+                    width: `${item.percentage}%`,
+                  }}
+                  className={`h-4 ${item.color}`}
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  {item.label} - {item.value.toFixed(2)} sec
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </TooltipProvider>
+      </div>
+      <div className="mt-2 flex gap-4 px-4">
         {[loadTime, preprocessTime, predictTime].map((item) => (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div
-                style={{
-                  width: `${item.percentage}%`,
-                }}
-                className={`h-4 ${item.color}`}
-              />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>
-                {item.label} - {item.value.toFixed(2)} sec
-              </p>
-            </TooltipContent>
-          </Tooltip>
+          <p className="inline-flex items-center gap-2">
+            <span className={cn("block h-2 w-2 rounded-full", item.color)} />
+            {item.label}
+          </p>
         ))}
-      </TooltipProvider>
-    </div>
+      </div>
+    </>
   )
 }
