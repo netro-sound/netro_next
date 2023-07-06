@@ -27,7 +27,13 @@ export default async function Page() {
   const { experimentQueries } = await fetchGraphQL<
     { experimentQueries: ExperimentQueryType[] },
     unknown
-  >(GET_QUERIES)
+  >(
+    GET_QUERIES,
+    {},
+    {
+      cache: "no-cache",
+    }
+  )
 
   return (
     <>
