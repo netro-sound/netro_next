@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator"
 import GridQueries from "@/components/queries/grid-queries"
 
 export const metadata: Metadata = {
-  title: "Tracks",
+  title: "Queries",
 }
 
 const GET_QUERIES = gql`

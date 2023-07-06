@@ -49,24 +49,6 @@ const GET_QUERY_DATA = gql`
   }
 `
 
-const GET_RESULT_TRACKS = gql`
-  query QueryResultTracks($ids: [String], $page: Int = 1, $limit: Int = 100) {
-    tracks(tracksId: $ids, page: $page, limit: $limit) {
-      id
-      name
-      durationMs
-      albums {
-        id
-        name
-      }
-      artists {
-        id
-        name
-      }
-    }
-  }
-`
-
 export async function generateMetadata({ params }: PageParams) {
   const { experimentQueryById } = await fetchGraphQL<
     { experimentQueryById: ExperimentQueryType },
