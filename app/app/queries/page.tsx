@@ -1,11 +1,10 @@
 import { Metadata } from "next"
-import { ExperimentQueryType, TrackType } from "@/__generated__/graphql"
+import { ExperimentQueryType } from "@/__generated__/graphql"
 import { gql } from "graphql-tag"
 
 import fetchGraphQL from "@/lib/client"
 import { Separator } from "@/components/ui/separator"
 import GridQueries from "@/components/queries/grid-queries"
-import GridTracks from "@/components/tracks/grid-tracks"
 
 export const metadata: Metadata = {
   title: "Tracks",

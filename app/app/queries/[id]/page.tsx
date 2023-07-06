@@ -1,10 +1,10 @@
 import React from "react"
 import { ExperimentQueryType, TrackType } from "@/__generated__/graphql"
-import { FETCH_LIST_TRACKS } from "@/stores/usePlayerStore"
 import { gql } from "graphql-tag"
 
 import { PageParams } from "@/types/PageParams"
 import fetchGraphQL from "@/lib/client"
+import { Separator } from "@/components/ui/separator"
 import CommonSection from "@/components/common-section"
 import PlayQueryTrack from "@/components/queries/play-query-track"
 import TimeQuery from "@/components/queries/time-query"
@@ -23,8 +23,26 @@ const GET_QUERY_DATA = gql`
   query QueryData($id: UUID!) {
     experimentQueryById(id: $id) {
       id
-      resultJson
-      executionJson
+      predictTime
+      preprocessTime
+      loadTime
+      trackQuery {
+        accuracy
+        support
+        track {
+          id
+          name
+          durationMs
+          albums {
+            id
+            name
+          }
+          artists {
+            id
+            name
+          }
+        }
+      }
       queryTrack
       streamUrl
     }
@@ -69,25 +87,18 @@ export default async function Page({ params }: PageParams) {
     id: params.id,
   })
 
-  const results = query.resultJson?.map(
-    (item: string) =>
-      JSON.parse(item) as { track: string; accuracy: number; support: number }
-  )
+  let totalSupports = 0
+  let totalPredictions = 0
 
-  let { tracks } = await fetchGraphQL<{ tracks: TrackType[] }, unknown>(
-    FETCH_LIST_TRACKS,
-    {
-      ids: results?.map((item) => item.track),
-    }
-  )
+  let tracks = query.trackQuery.map((item) => {
+    totalSupports += item.support || 0
+    totalPredictions += 1
 
-  tracks = tracks.map((track) => {
-    const result = results?.find((item) => item.track === track.id)
     return {
-      ...track,
-      accuracy: result?.accuracy,
-      support: result?.support,
-    }
+      ...item.track,
+      accuracy: item.accuracy,
+      support: item.support,
+    } as TrackType
   })
 
   tracks = tracks.sort((a, b) => {
@@ -97,26 +108,25 @@ export default async function Page({ params }: PageParams) {
     return 0
   })
 
-  const execution = JSON.parse(query.executionJson || "{}")
   const totalExecutionTime =
-    execution.load_time + execution.predict_time + execution.preprocess_time
+    query.loadTime! + query.predictTime! + query.preprocessTime!
   const executionTime = {
     load_time: {
       label: "Load Time",
-      value: execution.load_time,
-      percentage: (execution.load_time / totalExecutionTime) * 100,
+      value: query.loadTime!,
+      percentage: (query.loadTime! / totalExecutionTime) * 100,
       color: "bg-green-500",
     },
     predict_time: {
       label: "Predict Time",
-      value: execution.predict_time,
-      percentage: (execution.predict_time / totalExecutionTime) * 100,
+      value: query.predictTime!,
+      percentage: (query.predictTime! / totalExecutionTime) * 100,
       color: "bg-blue-500",
     },
     preprocess_time: {
       label: "Preprocess Time",
-      value: execution.preprocess_time,
-      percentage: (execution.preprocess_time / totalExecutionTime) * 100,
+      value: query.preprocessTime!,
+      percentage: (query.preprocessTime! / totalExecutionTime) * 100,
       color: "bg-yellow-500",
     },
   }
@@ -156,6 +166,12 @@ export default async function Page({ params }: PageParams) {
           predictTime={executionTime.predict_time}
           preprocessTime={executionTime.preprocess_time}
         />
+
+        <div className="px-4">
+          <p>Total supports: {totalSupports}</p>
+          <p>Total predictions: {totalPredictions}</p>
+          <Separator className="my-4" />
+        </div>
       </div>
       <CommonSection className="px-4" title={"Tracks"}>
         <TableTracks tracks={tracks} queueAll={true} queryResult={true} />

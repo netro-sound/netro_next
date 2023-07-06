@@ -29,6 +29,12 @@ export type Scalars = {
   Int: { input: number; output: number }
   Float: { input: number; output: number }
   /**
+   * The `DateTime` scalar type represents a DateTime
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  DateTime: { input: any; output: any }
+  /**
    * Allows use of a JSON String for input / output from the GraphQL schema.
    *
    * Use of this type is *not recommended* as you lose the benefits of having a defined, static
@@ -95,13 +101,17 @@ export type DatasetType = {
 
 export type ExperimentQueryType = {
   __typename?: "ExperimentQueryType"
-  executionJson?: Maybe<Scalars["JSONString"]["output"]>
+  dateCreated: Scalars["DateTime"]["output"]
   experiment: ExperimentType
   id: Scalars["UUID"]["output"]
+  loadTime?: Maybe<Scalars["Float"]["output"]>
   model: ModelType
+  predictTime?: Maybe<Scalars["Float"]["output"]>
+  preprocessTime?: Maybe<Scalars["Float"]["output"]>
   queryTrack?: Maybe<Scalars["String"]["output"]>
-  resultJson?: Maybe<Array<Scalars["JSONString"]["output"]>>
   streamUrl?: Maybe<Scalars["String"]["output"]>
+  trackQuery: Array<TrackQueryType>
+  tracks: Array<TrackType>
 }
 
 export type ExperimentType = {
@@ -284,6 +294,15 @@ export type ThumbnailType = {
   width: Scalars["Int"]["output"]
 }
 
+export type TrackQueryType = {
+  __typename?: "TrackQueryType"
+  accuracy?: Maybe<Scalars["Float"]["output"]>
+  id: Scalars["ID"]["output"]
+  query: ExperimentQueryType
+  support?: Maybe<Scalars["Int"]["output"]>
+  track: TrackType
+}
+
 export type TrackType = {
   support?: number
   accuracy?: number
@@ -301,12 +320,14 @@ export type TrackType = {
   name?: Maybe<Scalars["String"]["output"]>
   playlists: Array<PlaylistType>
   popularity?: Maybe<Scalars["Int"]["output"]>
+  queries: Array<ExperimentQueryType>
   sampleRate?: Maybe<Scalars["Int"]["output"]>
   spotifyHref?: Maybe<Scalars["String"]["output"]>
   status?: Maybe<ApiTrackStatusChoices>
   streamUrl?: Maybe<Scalars["String"]["output"]>
   thumbnails?: Maybe<Array<ThumbnailType>>
   trackNumber?: Maybe<Scalars["Int"]["output"]>
+  trackQuery: Array<TrackQueryType>
   youtubeHref?: Maybe<Scalars["String"]["output"]>
 }
 
@@ -571,9 +592,27 @@ export type QueryDataQuery = {
   experimentQueryById?: {
     __typename?: "ExperimentQueryType"
     id: any
-    resultJson?: Array<any> | null
-    executionJson?: any | null
+    predictTime?: number | null
+    preprocessTime?: number | null
+    loadTime?: number | null
     queryTrack?: string | null
+    streamUrl?: string | null
+    tracks: Array<{
+      __typename?: "TrackType"
+      id: string
+      name?: string | null
+      durationMs?: number | null
+      albums?: Array<{
+        __typename?: "AlbumType"
+        id: string
+        name?: string | null
+      }> | null
+      artists?: Array<{
+        __typename?: "ArtistType"
+        id: string
+        name?: string | null
+      }> | null
+    }>
   } | null
 }
 
@@ -1626,12 +1665,63 @@ export const QueryDataDocument = {
               kind: "SelectionSet",
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "resultJson" } },
+                { kind: "Field", name: { kind: "Name", value: "predictTime" } },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "executionJson" },
+                  name: { kind: "Name", value: "preprocessTime" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "loadTime" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "tracks" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "name" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "durationMs" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "albums" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "id" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "name" },
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "artists" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "id" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "name" },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
                 },
                 { kind: "Field", name: { kind: "Name", value: "queryTrack" } },
+                { kind: "Field", name: { kind: "Name", value: "streamUrl" } },
               ],
             },
           },

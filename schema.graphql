@@ -35,13 +35,17 @@ type DatasetType {
 }
 
 type ExperimentQueryType {
-  executionJson: JSONString
+  dateCreated: DateTime!
   experiment: ExperimentType!
   id: UUID!
+  loadTime: Float
   model: ModelType!
+  predictTime: Float
+  preprocessTime: Float
   queryTrack: String
-  resultJson: [JSONString!]
   streamUrl: String
+  trackQuery: [TrackQueryType!]!
+  tracks: [TrackType!]!
 }
 
 type ExperimentType {
@@ -131,6 +135,14 @@ type ThumbnailType {
   width: Int!
 }
 
+type TrackQueryType {
+  accuracy: Float
+  id: ID!
+  query: ExperimentQueryType!
+  support: Int
+  track: TrackType!
+}
+
 type TrackType {
   albums: [AlbumType!]
   artists: [ArtistType!]
@@ -145,12 +157,14 @@ type TrackType {
   name: String
   playlists: [PlaylistType!]!
   popularity: Int
+  queries: [ExperimentQueryType!]!
   sampleRate: Int
   spotifyHref: String
   status: ApiTrackStatusChoices
   streamUrl: String
   thumbnails: [ThumbnailType!]
   trackNumber: Int
+  trackQuery: [TrackQueryType!]!
   youtubeHref: String
 }
 
@@ -187,6 +201,14 @@ enum MlModelTypeChoices {
   "Mlp"
   MLP
 }
+
+"""
+
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar DateTime
 
 """
 
