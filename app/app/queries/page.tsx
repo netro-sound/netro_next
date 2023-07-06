@@ -16,7 +16,9 @@ const GET_QUERIES = gql`
       id
       model {
         type
-        id
+        dependsOn {
+          type
+        }
       }
     }
   }

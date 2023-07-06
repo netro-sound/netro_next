@@ -19,6 +19,23 @@ export default function CardQuery({
   className,
   ...props
 }: AlbumArtworkProps) {
+  function renderType(type: string) {
+    const types = {
+      AE_BILSTM: "BiLSTM",
+      AE_LSTM: "LSTM",
+      AE_MLP: "MLP",
+      AE_CNN: "CNN",
+      MLP: "MLP",
+      CNN: "CNN",
+      LSTM: "LSTM",
+      BiLSTM: "BiLSTM",
+      SVM: "SVM",
+    }
+
+    // @ts-ignore
+    return type in types ? (types[type] as string) : type
+  }
+
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <Link
@@ -44,7 +61,7 @@ export default function CardQuery({
           {query.id}
         </Link>
         <p className="line-clamp-2 text-xs text-muted-foreground">
-          {query.model.type}
+          {renderType(query.model.dependsOn?.type!)} - {query.model.type}
         </p>
       </div>
     </div>

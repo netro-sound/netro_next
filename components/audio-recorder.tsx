@@ -40,6 +40,7 @@ export default function AudioRecorder(props: Props) {
   const { pause } = usePlayerStore((state) => state)
   const [openDialog, setOpenDialog] = useState(false)
   const router = useRouter()
+  const [time, setTime] = useState(0)
 
   const [statusSubmit, setStatusSubmit] = useState<
     "finished" | "submitting" | "error" | "idle"
@@ -63,8 +64,11 @@ export default function AudioRecorder(props: Props) {
   function handleRecord() {
     if (status === "idle") {
       startRecording()
+      setTime(new Date().getTime())
     } else {
       stopRecording()
+      setTime((prevState) => new Date().getTime() - prevState)
+      pause()
     }
   }
 
@@ -123,7 +127,10 @@ export default function AudioRecorder(props: Props) {
 
     if (!experiment || !model) alert("No experiment or model found")
 
-    const duration = audioRef.current?.duration
+    const duration =
+      audioRef.current?.duration != Infinity
+        ? audioRef.current?.duration
+        : time / 1000
 
     if (duration < MIN_TIME) return alert("Recording too short")
     if (duration > MAX_TIME) return alert("Recording too long")
@@ -155,6 +162,7 @@ export default function AudioRecorder(props: Props) {
     if (mediaBlobUrl) {
       setLocalMediaURL(mediaBlobUrl)
       audioRef.current = new Audio(mediaBlobUrl)
+      audioRef.current?.load()
       setPlayStatus("paused")
     }
   }, [mediaBlobUrl])
