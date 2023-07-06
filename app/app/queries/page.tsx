@@ -31,7 +31,7 @@ export default async function Page() {
     GET_QUERIES,
     {},
     {
-      cache: "no-cache",
+      cache: "no-store",
     }
   )
 
