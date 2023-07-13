@@ -37,6 +37,7 @@ type DatasetType {
 type ExperimentQueryType {
   dateCreated: DateTime!
   experiment: ExperimentType!
+  fingerprintTime: Float
   id: UUID!
   loadTime: Float
   model: ModelType!

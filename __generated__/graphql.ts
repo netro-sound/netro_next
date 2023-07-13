@@ -103,6 +103,7 @@ export type ExperimentQueryType = {
   __typename?: "ExperimentQueryType"
   dateCreated: Scalars["DateTime"]["output"]
   experiment: ExperimentType
+  fingerprintTime?: Maybe<Scalars["Float"]["output"]>
   id: Scalars["UUID"]["output"]
   loadTime?: Maybe<Scalars["Float"]["output"]>
   model: ModelType
@@ -306,8 +307,8 @@ export type TrackQueryType = {
 
 export type TrackType = {
   accuracy?: number
-  support?: number
   fingerprint?: boolean
+  support?: number
   __typename?: "TrackType"
   albums?: Maybe<Array<AlbumType>>
   artists?: Maybe<Array<ArtistType>>
@@ -596,6 +597,7 @@ export type QueryDataQuery = {
     id: any
     predictTime?: number | null
     preprocessTime?: number | null
+    fingerprintTime?: number | null
     loadTime?: number | null
     queryTrack?: string | null
     streamUrl?: string | null
@@ -603,6 +605,7 @@ export type QueryDataQuery = {
       __typename?: "TrackQueryType"
       accuracy?: number | null
       support?: number | null
+      fingerprint: boolean
       track: {
         __typename?: "TrackType"
         id: string
@@ -1651,6 +1654,10 @@ export const QueryDataDocument = {
                   kind: "Field",
                   name: { kind: "Name", value: "preprocessTime" },
                 },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "fingerprintTime" },
+                },
                 { kind: "Field", name: { kind: "Name", value: "loadTime" } },
                 {
                   kind: "Field",
@@ -1665,6 +1672,10 @@ export const QueryDataDocument = {
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "support" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "fingerprint" },
                       },
                       {
                         kind: "Field",

@@ -25,6 +25,7 @@ const GET_QUERY_DATA = gql`
       id
       predictTime
       preprocessTime
+      fingerprintTime
       loadTime
       trackQuery {
         accuracy
@@ -93,7 +94,10 @@ export default async function Page({ params }: PageParams) {
   })
 
   const totalExecutionTime =
-    query.loadTime! + query.predictTime! + query.preprocessTime!
+    query.loadTime! +
+    query.predictTime! +
+    query.preprocessTime! +
+    query.fingerprintTime!
   const executionTime = {
     load_time: {
       label: "Load Time",
@@ -112,6 +116,12 @@ export default async function Page({ params }: PageParams) {
       value: query.preprocessTime!,
       percentage: (query.preprocessTime! / totalExecutionTime) * 100,
       color: "bg-yellow-500",
+    },
+    fingerprint_time: {
+      label: "Fingerprint Time",
+      value: query.fingerprintTime!,
+      percentage: (query.fingerprintTime! / totalExecutionTime) * 100,
+      color: "bg-purple-500",
     },
   }
 
@@ -149,6 +159,7 @@ export default async function Page({ params }: PageParams) {
           loadTime={executionTime.load_time}
           predictTime={executionTime.predict_time}
           preprocessTime={executionTime.preprocess_time}
+          fingerprintTime={executionTime.fingerprint_time}
         />
 
         <div className="px-4">
