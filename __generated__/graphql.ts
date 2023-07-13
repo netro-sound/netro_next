@@ -297,6 +297,7 @@ export type ThumbnailType = {
 export type TrackQueryType = {
   __typename?: "TrackQueryType"
   accuracy?: Maybe<Scalars["Float"]["output"]>
+  fingerprint: Scalars["Boolean"]["output"]
   id: Scalars["ID"]["output"]
   query: ExperimentQueryType
   support?: Maybe<Scalars["Int"]["output"]>
@@ -304,8 +305,9 @@ export type TrackQueryType = {
 }
 
 export type TrackType = {
-  support?: number
   accuracy?: number
+  support?: number
+  fingerprint?: boolean
   __typename?: "TrackType"
   albums?: Maybe<Array<AlbumType>>
   artists?: Maybe<Array<ArtistType>>
@@ -597,52 +599,28 @@ export type QueryDataQuery = {
     loadTime?: number | null
     queryTrack?: string | null
     streamUrl?: string | null
-    tracks: Array<{
-      __typename?: "TrackType"
-      id: string
-      name?: string | null
-      durationMs?: number | null
-      albums?: Array<{
-        __typename?: "AlbumType"
+    trackQuery: Array<{
+      __typename?: "TrackQueryType"
+      accuracy?: number | null
+      support?: number | null
+      track: {
+        __typename?: "TrackType"
         id: string
         name?: string | null
-      }> | null
-      artists?: Array<{
-        __typename?: "ArtistType"
-        id: string
-        name?: string | null
-      }> | null
+        durationMs?: number | null
+        albums?: Array<{
+          __typename?: "AlbumType"
+          id: string
+          name?: string | null
+        }> | null
+        artists?: Array<{
+          __typename?: "ArtistType"
+          id: string
+          name?: string | null
+        }> | null
+      }
     }>
   } | null
-}
-
-export type QueryResultTracksQueryVariables = Exact<{
-  ids?: InputMaybe<
-    | Array<InputMaybe<Scalars["String"]["input"]>>
-    | InputMaybe<Scalars["String"]["input"]>
-  >
-  page?: InputMaybe<Scalars["Int"]["input"]>
-  limit?: InputMaybe<Scalars["Int"]["input"]>
-}>
-
-export type QueryResultTracksQuery = {
-  __typename?: "Query"
-  tracks?: Array<{
-    __typename?: "TrackType"
-    id: string
-    name?: string | null
-    durationMs?: number | null
-    albums?: Array<{
-      __typename?: "AlbumType"
-      id: string
-      name?: string | null
-    }> | null
-    artists?: Array<{
-      __typename?: "ArtistType"
-      id: string
-      name?: string | null
-    }> | null
-  }> | null
 }
 
 export type ListExperimentQueriesQueryVariables = Exact<{
@@ -658,7 +636,10 @@ export type ListExperimentQueriesQuery = {
     model: {
       __typename?: "ModelType"
       type?: MlModelTypeChoices | null
-      id: string
+      dependsOn?: {
+        __typename?: "ModelType"
+        type?: MlModelTypeChoices | null
+      } | null
     }
   }> | null
 }
@@ -1673,19 +1654,21 @@ export const QueryDataDocument = {
                 { kind: "Field", name: { kind: "Name", value: "loadTime" } },
                 {
                   kind: "Field",
-                  name: { kind: "Name", value: "tracks" },
+                  name: { kind: "Name", value: "trackQuery" },
                   selectionSet: {
                     kind: "SelectionSet",
                     selections: [
-                      { kind: "Field", name: { kind: "Name", value: "id" } },
-                      { kind: "Field", name: { kind: "Name", value: "name" } },
                       {
                         kind: "Field",
-                        name: { kind: "Name", value: "durationMs" },
+                        name: { kind: "Name", value: "accuracy" },
                       },
                       {
                         kind: "Field",
-                        name: { kind: "Name", value: "albums" },
+                        name: { kind: "Name", value: "support" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "track" },
                         selectionSet: {
                           kind: "SelectionSet",
                           selections: [
@@ -1697,22 +1680,43 @@ export const QueryDataDocument = {
                               kind: "Field",
                               name: { kind: "Name", value: "name" },
                             },
-                          ],
-                        },
-                      },
-                      {
-                        kind: "Field",
-                        name: { kind: "Name", value: "artists" },
-                        selectionSet: {
-                          kind: "SelectionSet",
-                          selections: [
                             {
                               kind: "Field",
-                              name: { kind: "Name", value: "id" },
+                              name: { kind: "Name", value: "durationMs" },
                             },
                             {
                               kind: "Field",
-                              name: { kind: "Name", value: "name" },
+                              name: { kind: "Name", value: "albums" },
+                              selectionSet: {
+                                kind: "SelectionSet",
+                                selections: [
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "id" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "name" },
+                                  },
+                                ],
+                              },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "artists" },
+                              selectionSet: {
+                                kind: "SelectionSet",
+                                selections: [
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "id" },
+                                  },
+                                  {
+                                    kind: "Field",
+                                    name: { kind: "Name", value: "name" },
+                                  },
+                                ],
+                              },
                             },
                           ],
                         },
@@ -1730,112 +1734,6 @@ export const QueryDataDocument = {
     },
   ],
 } as unknown as DocumentNode<QueryDataQuery, QueryDataQueryVariables>
-export const QueryResultTracksDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "QueryResultTracks" },
-      variableDefinitions: [
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "ids" } },
-          type: {
-            kind: "ListType",
-            type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "String" },
-            },
-          },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: { kind: "Variable", name: { kind: "Name", value: "page" } },
-          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-          defaultValue: { kind: "IntValue", value: "1" },
-        },
-        {
-          kind: "VariableDefinition",
-          variable: {
-            kind: "Variable",
-            name: { kind: "Name", value: "limit" },
-          },
-          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-          defaultValue: { kind: "IntValue", value: "100" },
-        },
-      ],
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "tracks" },
-            arguments: [
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "tracksId" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "ids" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "page" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "page" },
-                },
-              },
-              {
-                kind: "Argument",
-                name: { kind: "Name", value: "limit" },
-                value: {
-                  kind: "Variable",
-                  name: { kind: "Name", value: "limit" },
-                },
-              },
-            ],
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "name" } },
-                { kind: "Field", name: { kind: "Name", value: "durationMs" } },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "albums" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      { kind: "Field", name: { kind: "Name", value: "id" } },
-                      { kind: "Field", name: { kind: "Name", value: "name" } },
-                    ],
-                  },
-                },
-                {
-                  kind: "Field",
-                  name: { kind: "Name", value: "artists" },
-                  selectionSet: {
-                    kind: "SelectionSet",
-                    selections: [
-                      { kind: "Field", name: { kind: "Name", value: "id" } },
-                      { kind: "Field", name: { kind: "Name", value: "name" } },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<
-  QueryResultTracksQuery,
-  QueryResultTracksQueryVariables
->
 export const ListExperimentQueriesDocument = {
   kind: "Document",
   definitions: [
@@ -1895,7 +1793,19 @@ export const ListExperimentQueriesDocument = {
                     kind: "SelectionSet",
                     selections: [
                       { kind: "Field", name: { kind: "Name", value: "type" } },
-                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "dependsOn" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "type" },
+                            },
+                          ],
+                        },
+                      },
                     ],
                   },
                 },

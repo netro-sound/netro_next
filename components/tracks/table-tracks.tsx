@@ -74,7 +74,11 @@ export default function TableTracks({
         <TableBody>
           {tracks.map((track, index) => (
             <TableRow
-              className={cn(track.id == currentTrack?.id && "bg-secondary")}
+              className={cn(
+                track.id == currentTrack?.id && "bg-secondary",
+                track.fingerprint && "bg-orange-500"
+              )}
+              title={track.fingerprint ? "Fingerprinted by Panako" : undefined}
               key={track.id}
               onDoubleClick={() => handlePlayTrack(track)}
             >
@@ -104,7 +108,12 @@ export default function TableTracks({
                     {track.support ?? "-"}
                   </TableCell>
                   <TableCell className="hidden w-48 truncate text-xs sm:table-cell 2xl:w-96">
-                    {((track.accuracy ?? 0) * 100).toFixed(2) ?? "-"}
+                    {track.support ?? "-"}
+                  </TableCell>
+                  <TableCell className="hidden w-48 truncate text-xs sm:table-cell 2xl:w-96">
+                    {track.accuracy
+                      ? ((track.accuracy ?? 0) * 100).toFixed(2)
+                      : "-"}
                   </TableCell>
                 </>
               )}

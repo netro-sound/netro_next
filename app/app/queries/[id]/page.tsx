@@ -29,6 +29,7 @@ const GET_QUERY_DATA = gql`
       trackQuery {
         accuracy
         support
+        fingerprint
         track {
           id
           name
@@ -80,6 +81,7 @@ export default async function Page({ params }: PageParams) {
       ...item.track,
       accuracy: item.accuracy,
       support: item.support,
+      fingerprint: item.fingerprint,
     } as TrackType
   })
 
