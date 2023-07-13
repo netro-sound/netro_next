@@ -76,7 +76,10 @@ export default function TableTracks({
             <TableRow
               className={cn(
                 track.id == currentTrack?.id && "bg-secondary",
-                track.fingerprint && "bg-orange-500"
+                track.fingerprint && "bg-purple-500",
+                track.accuracy &&
+                  (index == 0 || tracks[index - 1].fingerprint) &&
+                  "bg-blue-500"
               )}
               title={track.fingerprint ? "Fingerprinted by Panako" : undefined}
               key={track.id}
